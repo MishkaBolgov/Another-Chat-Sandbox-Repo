@@ -6,15 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_outgoing_message.view.*
+import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
-import org.joda.time.Instant
 import ru.appvelox.chat.model.Message
 
 class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     var currentUserId: Long? = null
-    var messageBackgroundCornerRadius = 20f
+    var messageBackgroundCornerRadius = 30f
     var incomingMessageBackgroundColor = Color.argb(20, 33, 150, 243)
     var outgoingMessageBackgroundColor = Color.argb(20, 76, 175, 80)
 
@@ -30,8 +29,8 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         cornerRadii = floatArrayOf(0f, 0f, radius, radius, radius, radius, radius, radius)
     }
 
-    var outgoingMessageLayout = R.layout.item_outgoing_message
-    var incomingMessageLayout = R.layout.item_incoming_message
+    var outgoingMessageLayout = R.layout.item_incoming_message
+    var incomingMessageLayout = R.layout.item_outgoing_message
 
     private val messageList = mutableListOf<Message>()
 
@@ -96,9 +95,9 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         val messageAuthorId = messageList[position].getAuthor().getId()
 
         return if (messageAuthorId == currentUserId)
-            MessageType.OUTGOING.type
-        else
             MessageType.INCOMING.type
+        else
+            MessageType.OUTGOING.type
     }
 
     enum class MessageType(val type: Int) {

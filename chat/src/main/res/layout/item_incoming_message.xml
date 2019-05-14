@@ -13,48 +13,46 @@
 
     <include layout="@layout/date"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/contentContainer"
+    <FrameLayout
+            android:id="@+id/avatarContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateContainer">
+        <include layout="@layout/avatar"/>
+    </FrameLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/contentContainer"
+            style="@style/MessageContainer"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintTop_toBottomOf="@id/dateContainer"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarContainer">
 
         <TextView
                 android:id="@+id/authorName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="Billy Bob"
-                android:textSize="14dp"
-                android:gravity="end|center_vertical"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                style="@style/Name"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
                 android:id="@+id/messageText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxWidth="340dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:text="Something hairy"
-                android:textSize="18dp"
-                android:textStyle="bold"
+                style="@style/MessageBody"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/authorName"/>
 
         <TextView
                 android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="17:33"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
+                style="@style/Time"
                 app:layout_constraintTop_toBottomOf="@+id/messageText"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>

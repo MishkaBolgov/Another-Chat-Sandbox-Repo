@@ -25,7 +25,7 @@ class MessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
     }
 
     fun bind(message: Message, showMessageDate: Boolean = false) {
-        itemView.authorName.text = message.getAuthor().getName()
+        itemView.authorName.text = message.getAuthor().getName() + " #${message.getId()}"
         itemView.messageText.text = message.getText()
         itemView.time.text = SimpleDateFormat("HH:mm").format(message.getDate())
         itemView.date.text = SimpleDateFormat("dd MMM").format(message.getDate())

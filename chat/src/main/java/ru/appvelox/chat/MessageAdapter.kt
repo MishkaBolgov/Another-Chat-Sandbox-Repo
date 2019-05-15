@@ -10,20 +10,23 @@ import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
+import java.util.LinkedList
 
 class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
+    var loadMoreListener: ChatView.LoadMoreListener? = null
+
     var currentUserId: Long? = null
     var messageBackgroundCornerRadius = 30f
     var incomingMessageBackgroundColor = Color.argb(20, 33, 150, 243)
     var outgoingMessageBackgroundColor = Color.argb(20, 76, 175, 80)
 
-    val incomingMessageBackground= GradientDrawable().apply {
+    val incomingMessageBackground = GradientDrawable().apply {
         setColor(outgoingMessageBackgroundColor)
         val radius = messageBackgroundCornerRadius
         cornerRadii = floatArrayOf(radius, radius, 0f, 0f, radius, radius, radius, radius)
     }
 
-    val outgoingMessageBackground= GradientDrawable().apply {
+    val outgoingMessageBackground = GradientDrawable().apply {
         setColor(incomingMessageBackgroundColor)
         val radius = messageBackgroundCornerRadius
         cornerRadii = floatArrayOf(0f, 0f, radius, radius, radius, radius, radius, radius)
@@ -34,9 +37,21 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
 
     private val messageList = mutableListOf<Message>()
 
-    fun addMessage(message: Message) {
+    fun addNewMessage(message: Message) {
         messageList.add(message)
         notifyItemInserted(messageList.indexOf(message))
+    }
+
+    fun addOldMessage(messages: List<Message>) {
+        messages.forEach {message ->
+            messageList.add(0, message)
+        }
+        val first = messageList.indexOf(messages.first())
+        val last = messageList.indexOf(messages.last())
+        notifyItemRangeInserted(
+            messageList.indexOf(messages.last()),
+            messages.size
+        )
     }
 
     companion object {
@@ -64,14 +79,18 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
             setIsRecyclable(false)
         }
 
+        view.setOnClickListener {
+            requestPreviousMessagesFromListener()
+        }
+
         return viewHolder
     }
 
-    override fun getItemCount() = if (currentUserId != null) messageList.size else 0
+    override fun getItemCount() = messageList.size//if (currentUserId != null) messageList.size else 0
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messageList[position]
-        if(position == 0) {
+        if (position == 0) {
             holder.bind(message)
             return
         }
@@ -83,7 +102,6 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         val showMessageDate = daysBetweenMessages != 0
 
         holder.bind(message, showMessageDate)
-
     }
 
     fun getLastMessageIndex(): Int {
@@ -91,7 +109,6 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        super.getItemViewType(position)
         val messageAuthorId = messageList[position].getAuthor().getId()
 
         return if (messageAuthorId == currentUserId)
@@ -113,6 +130,12 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     private fun View.applyIncomingStyle() {
         incomingMessageBackground.constantState?.let {
             this.contentContainer.background = it.newDrawable().mutate()
+        }
+    }
+
+    fun requestPreviousMessagesFromListener() {
+        loadMoreListener?.requestPreviousMessages(2, messageList.size) { loadedMessages ->
+            addOldMessage(loadedMessages)
         }
     }
 }

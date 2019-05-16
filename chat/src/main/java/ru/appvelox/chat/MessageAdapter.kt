@@ -2,6 +2,8 @@ package ru.appvelox.chat
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +12,6 @@ import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
-import java.util.LinkedList
 
 class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     var loadMoreListener: ChatView.LoadMoreListener? = null
@@ -19,6 +20,8 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     var messageBackgroundCornerRadius = 30f
     var incomingMessageBackgroundColor = Color.argb(20, 33, 150, 243)
     var outgoingMessageBackgroundColor = Color.argb(20, 76, 175, 80)
+
+    var oldDataLoading = false
 
     val incomingMessageBackground = GradientDrawable().apply {
         setColor(outgoingMessageBackgroundColor)
@@ -46,12 +49,15 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         messages.forEach {message ->
             messageList.add(0, message)
         }
-        val first = messageList.indexOf(messages.first())
-        val last = messageList.indexOf(messages.last())
-        notifyItemRangeInserted(
-            messageList.indexOf(messages.last()),
-            messages.size
-        )
+
+        Handler(Looper.getMainLooper()).post {
+
+            notifyItemRangeInserted(
+                messageList.indexOf(messages.last()),
+                messages.size
+            )
+            oldDataLoading = false
+        }
     }
 
     companion object {
@@ -79,9 +85,9 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
             setIsRecyclable(false)
         }
 
-        view.setOnClickListener {
-            requestPreviousMessagesFromListener()
-        }
+//        view.setOnClickListener {
+//            requestPreviousMessagesFromListener()
+//        }
 
         return viewHolder
     }
@@ -91,7 +97,7 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messageList[position]
         if (position == 0) {
-            holder.bind(message)
+            holder.bind(message, true)
             return
         }
 
@@ -134,8 +140,11 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     }
 
     fun requestPreviousMessagesFromListener() {
-        loadMoreListener?.requestPreviousMessages(2, messageList.size) { loadedMessages ->
-            addOldMessage(loadedMessages)
-        }
+        loadMoreListener?.requestPreviousMessages(2, messageList.size, object : ChatView.LoadMoreCallback {
+            override fun onResult(messages: List<Message>) {
+                oldDataLoading = true
+                addOldMessage(messages)
+            }
+        })
     }
 }

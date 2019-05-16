@@ -11,6 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MessageLayoutManager(context: Context): LinearLayoutManager(context){
     init {
-        this.stackFromEnd = true
+        stackFromEnd = true
     }
 }

@@ -1,5 +1,6 @@
 package ru.appvelox.myapplication
 
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -21,13 +22,16 @@ class MainActivity : AppCompatActivity() {
         override fun requestPreviousMessages(
             count: Int,
             alreadyLoadedMessagesCount: Int,
-            callback: (List<Message>) -> Unit
+            callback: ChatView.LoadMoreCallback
         ) {
             val messages = mutableListOf<Message>()
             repeat(count) {
                 messages.add(MessageGenerator.generateMessage())
             }
-            callback(messages)
+            AsyncTask.execute {
+                Thread.sleep(1000)
+                callback.onResult(messages)
+            }
         }
     }
 
@@ -41,12 +45,12 @@ class MainActivity : AppCompatActivity() {
             chatView.addMessage(MessageGenerator.generateMessage())
         }
 
-        button2.setOnClickListener {
-            val messages = mutableListOf<Message>()
-            repeat(10) {
-                messages.add(MessageGenerator.generateMessage())
-            }
-            chatView.addOldMessages(messages)
-        }
+//        button2.setOnClickListener {
+//            val messages = mutableListOf<Message>()
+//            repeat(5) {
+//                messages.add(MessageGenerator.generateMessage())
+//            }
+//            chatView.addOldMessages(messages)
+//        }
     }
 }

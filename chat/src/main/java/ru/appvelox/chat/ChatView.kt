@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import ru.appvelox.chat.model.Message
 
-class ChatView(context: Context, attributeSet: AttributeSet): RecyclerView(context, attributeSet) {
+class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
     private val adapter = MessageAdapter()
 
     fun setLoadMoreListener(listener: LoadMoreListener) {
@@ -17,38 +17,48 @@ class ChatView(context: Context, attributeSet: AttributeSet): RecyclerView(conte
         super.setAdapter(adapter)
         val layoutManager = MessageLayoutManager(context)
         super.setLayoutManager(layoutManager)
-        addOnScrollListener(object : OnScrollListener(){
+        addOnScrollListener(object : OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                Log.d("mytag", "onScrolled dx = $dx, dy = $dy, first visible = ${layoutManager.findFirstVisibleItemPosition()}, last visible = ${layoutManager.findLastVisibleItemPosition()}")
-//                if(layoutManager.findFirstVisibleItemPosition() == 0)
-//                    adapter.requestPreviousMessagesFromListener()
+                if (layoutManager.findFirstVisibleItemPosition() <= 5 && !adapter.oldDataLoading) {
+                    Log.d("mytag", "Request old items")
+                    adapter.requestPreviousMessagesFromListener()
+                }
             }
         })
     }
 
     fun addMessage(message: Message) {
         adapter.addNewMessage(message)
-        layoutManager?.scrollToPosition(adapter.getLastMessageIndex())
+//        layoutManager?.scrollToPosition(adapter.getLastMessageIndex())
     }
 
-    fun setCurrentUserId(id: Long){
+    fun setCurrentUserId(id: Long) {
         adapter.currentUserId = id
     }
 
     interface LoadMoreListener {
-        fun requestPreviousMessages(count: Int, alreadyLoadedMessagesCount: Int, callback: (List<Message>) -> Unit)
-    }
-
-    override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
-        super.onScrollChanged(l, t, oldl, oldt)
-        Log.d("mytag", "onScrollChanged l = $l, t = $t, oldl = $oldl, oldt = $oldt")
+        fun requestPreviousMessages(count: Int, alreadyLoadedMessagesCount: Int, callback: LoadMoreCallback)
     }
 
     fun addOldMessages(messages: List<Message>) {
         adapter.addOldMessage(messages)
-        layoutManager?.scrollToPosition(adapter.getLastMessageIndex())
     }
 
+    interface LoadMoreCallback {
+        fun onResult(messages: List<Message>)
+    }
+
+    interface OnItemClickListener{
+        fun onClick(message: Message){
+
+        }
+    }
+
+    interface OnItemLongClickListener{
+        fun onClick(message: Message){
+
+        }
+    }
 
 }

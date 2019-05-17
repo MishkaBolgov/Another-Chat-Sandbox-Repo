@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
+import kotlin.reflect.KProperty
 
 class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     var loadMoreListener: ChatView.LoadMoreListener? = null
@@ -22,6 +23,18 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     var outgoingMessageBackgroundColor = Color.argb(20, 76, 175, 80)
 
     var oldDataLoading = false
+
+    var onItemClickListener: OnItemClickListener? = null
+    set(value) {
+        notifyDataSetChanged()
+        field = value
+    }
+
+    var onItemLongClickListener: OnItemLongClickListener? = null
+        set(value) {
+            notifyDataSetChanged()
+            field = value
+        }
 
     val incomingMessageBackground = GradientDrawable().apply {
         setColor(outgoingMessageBackgroundColor)
@@ -85,10 +98,6 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
             setIsRecyclable(false)
         }
 
-//        view.setOnClickListener {
-//            requestPreviousMessagesFromListener()
-//        }
-
         return viewHolder
     }
 
@@ -96,6 +105,20 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messageList[position]
+
+        onItemClickListener?.let {listener ->
+            holder.itemView.setOnClickListener {
+                listener.onClick(message)
+            }
+        }
+
+        onItemLongClickListener?.let {listener ->
+            holder.itemView.setOnLongClickListener {
+                listener.onClick(message)
+                true
+            }
+        }
+
         if (position == 0) {
             holder.bind(message, true)
             return
@@ -147,4 +170,6 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
             }
         })
     }
+
+
 }

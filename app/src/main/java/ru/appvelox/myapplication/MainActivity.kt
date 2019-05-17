@@ -4,10 +4,9 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import ru.appvelox.chat.ChatView
-import ru.appvelox.chat.MessageAdapter
-import ru.appvelox.chat.MessageViewHolder
+import ru.appvelox.chat.*
 import ru.appvelox.chat.model.Author
 import ru.appvelox.chat.model.Message
 import java.util.*
@@ -39,18 +38,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         chatView.setLoadMoreListener(listener)
+
         chatView.setCurrentUserId(MessageGenerator.user1.getId())
 
         button1.setOnClickListener {
             chatView.addMessage(MessageGenerator.generateMessage())
         }
 
-//        button2.setOnClickListener {
-//            val messages = mutableListOf<Message>()
-//            repeat(5) {
-//                messages.add(MessageGenerator.generateMessage())
-//            }
-//            chatView.addOldMessages(messages)
-//        }
+        button2.setOnClickListener {
+            chatView.onItemClickListener = object : OnItemClickListener {
+                override fun onClick(message: Message) {
+                    Toast.makeText(this@MainActivity, message.getText(), Toast.LENGTH_SHORT).show()
+                }
+            }
+            chatView.onItemLongClickListener = object : OnItemLongClickListener {
+                override fun onClick(message: Message) {
+                    Toast.makeText(this@MainActivity, "Huy #${message.getId()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

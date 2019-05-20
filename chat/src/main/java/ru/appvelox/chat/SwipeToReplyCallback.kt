@@ -8,11 +8,13 @@ import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.avatar.view.*
+import kotlinx.android.synthetic.main.item_incoming_message.view.*
 
-class SwipeToReplyCallback:ItemTouchHelper.Callback() {
+class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
+    var itemTouchHelper: ItemTouchHelper? = null
     private var blockSwipeDirection = true
-    private var actionOffset = 200
+    private var actionOffset = 500
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         return makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
@@ -31,8 +33,12 @@ class SwipeToReplyCallback:ItemTouchHelper.Callback() {
     }
 
     override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int {
-        if(blockSwipeDirection){
+//        if (isItemDraggedToAction)
+//            return 0
+
+        if (blockSwipeDirection) {
             blockSwipeDirection = false
+            isItemDraggedToAction = false
             return 0
         }
         return super.convertToAbsoluteDirection(flags, layoutDirection)
@@ -47,27 +53,73 @@ class SwipeToReplyCallback:ItemTouchHelper.Callback() {
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             setTouchListener(recyclerView, dX)
         }
-        getDefaultUIUtil().onDraw(c, recyclerView, viewHolder.itemView.avatar, dX, dY, actionState, isCurrentlyActive)
-//        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        getDefaultUIUtil().onDraw(
+            c,
+            recyclerView,
+            viewHolder.itemView.messageContainer,
+            dX,
+            dY,
+            actionState,
+            isCurrentlyActive
+        )
     }
 
-    fun setTouchListener(recyclerView: RecyclerView, dX: Float){
+    override fun onChildDrawOver(
+        c: Canvas,
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder?,
+        dX: Float,
+        dY: Float,
+        actionState: Int,
+        isCurrentlyActive: Boolean
+    ) {
+        viewHolder?.itemView?.messageContainer?.let {
+            getDefaultUIUtil().onDrawOver(
+                c,
+                recyclerView,
+                it,
+                dX,
+                dY,
+                actionState,
+                isCurrentlyActive
+            )
+        }
+    }
+
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        getDefaultUIUtil().clearView(viewHolder.itemView.messageContainer)
+    }
+
+    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        super.onSelectedChanged(viewHolder, actionState)
+
+        viewHolder?.let {
+            getDefaultUIUtil().onSelected(it.itemView.messageContainer)
+        }
+
+    }
+
+    fun setTouchListener(recyclerView: RecyclerView, dX: Float) {
         recyclerView.setOnTouchListener { v, event ->
             blockSwipeDirection = event.action == MotionEvent.ACTION_CANCEL || event.action == MotionEvent.ACTION_UP
 
-            if(blockSwipeDirection)
-                if(dX < -actionOffset)
-                    Toast.makeText(recyclerView.context, "Action", Toast.LENGTH_SHORT).show()
+            if(dX < -actionOffset) {
+                Toast.makeText(recyclerView.context, "Action", Toast.LENGTH_SHORT).show()
+                isItemDraggedToAction = true
+//                itemTouchHelper?.attachToRecyclerView(null)
+            }
+
+
+            if (blockSwipeDirection)
+                if (dX < -actionOffset){}
 
             false
         }
     }
 
-    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-        super.onSelectedChanged(viewHolder, actionState)
-        Log.d("mytag", "onSelectedChanged $actionState")
-    }
+    var isItemDraggedToAction = false
 }

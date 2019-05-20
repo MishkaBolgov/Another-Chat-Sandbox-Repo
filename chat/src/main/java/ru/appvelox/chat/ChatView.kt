@@ -37,7 +37,11 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
                 }
             }
         })
-        ItemTouchHelper(SwipeToReplyCallback()).attachToRecyclerView(this)
+        val swipeToReplyCallback = SwipeToReplyCallback()
+        val itemTouchHelper = ItemTouchHelper(swipeToReplyCallback)
+        swipeToReplyCallback.itemTouchHelper = itemTouchHelper
+        itemTouchHelper.attachToRecyclerView(this)
+
     }
 
     fun addMessage(message: Message) {

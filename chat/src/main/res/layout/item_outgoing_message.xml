@@ -14,47 +14,58 @@
 
     <include layout="@layout/date"/>
 
-    <FrameLayout
-            android:id="@+id/avatarContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateContainer">
-        <include layout="@layout/avatar"/>
-    </FrameLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/contentContainer"
-            style="@style/MessageContainer"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintTop_toBottomOf="@id/dateContainer"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/messageContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/avatarContainer">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateContainer"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-                android:id="@+id/authorName"
-                android:text="Billy Bob"
-                style="@style/Name"
+        <FrameLayout
+                android:id="@+id/avatarContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+            <include layout="@layout/avatar"/>
+        </FrameLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/contentContainer"
+                style="@style/MessageContainer"
                 app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-                android:id="@+id/messageText"
-                style="@style/MessageBody"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/authorName"/>
-
-        <TextView
-                android:id="@+id/time"
-                style="@style/Time"
-                app:layout_constraintTop_toBottomOf="@+id/messageText"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/avatarContainer">
+
+            <TextView
+                    android:id="@+id/authorName"
+                    android:text="Billy Bob"
+                    style="@style/Name"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                    android:id="@+id/messageText"
+                    style="@style/MessageBody"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/authorName"/>
+
+            <TextView
+                    android:id="@+id/time"
+                    style="@style/Time"
+                    app:layout_constraintTop_toBottomOf="@+id/messageText"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

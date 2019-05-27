@@ -1,6 +1,9 @@
 package ru.appvelox.chat
 
+import android.content.Context
 import android.graphics.Canvas
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -9,15 +12,19 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.avatar.view.*
 import kotlinx.android.synthetic.main.item_incoming_message.view.*
+import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
+import kotlin.math.abs
 
 class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
     var itemTouchHelper: ItemTouchHelper? = null
     private var blockSwipeDirection = true
-    private var actionOffset = 500
+    private var actionOffset = 400
+    private var resetOffset = 200
+    private var actionIconAppearOffset = 100
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-        return makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+        return makeMovementFlags(0, ItemTouchHelper.LEFT)
     }
 
     override fun onMove(
@@ -53,9 +60,26 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            setTouchListener(recyclerView, dX)
+
+        setTouchListener(recyclerView)
+
+        if(dX < -actionOffset && !isItemDraggedToAction) {
+            (recyclerView.context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(50)
+            isItemDraggedToAction = true
+//                itemTouchHelper?.attachToRecyclerView(null)
         }
+
+        if (dX < -actionOffset) return
+
+        if(dX > -resetOffset)
+            isItemDraggedToAction = false
+
+        if(dX < -actionIconAppearOffset) {
+            val progress = (dX + actionIconAppearOffset) / (actionOffset - actionIconAppearOffset)
+            val alpha = abs((255 * progress).toInt())
+            viewHolder.itemView.imageViewLeftSwipeActionIcon.imageAlpha = alpha
+        }
+
         getDefaultUIUtil().onDraw(
             c,
             recyclerView,
@@ -77,6 +101,10 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
         isCurrentlyActive: Boolean
     ) {
         viewHolder?.itemView?.messageContainer?.let {
+
+            if(isItemDraggedToAction)
+                return
+
             getDefaultUIUtil().onDrawOver(
                 c,
                 recyclerView,
@@ -103,23 +131,20 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
     }
 
-    fun setTouchListener(recyclerView: RecyclerView, dX: Float) {
+    fun setTouchListener(recyclerView: RecyclerView) {
         recyclerView.setOnTouchListener { v, event ->
-            blockSwipeDirection = event.action == MotionEvent.ACTION_CANCEL || event.action == MotionEvent.ACTION_UP
-
-            if(dX < -actionOffset) {
-                Toast.makeText(recyclerView.context, "Action", Toast.LENGTH_SHORT).show()
-                isItemDraggedToAction = true
-//                itemTouchHelper?.attachToRecyclerView(null)
+           blockSwipeDirection = event.action == MotionEvent.ACTION_CANCEL || event.action == MotionEvent.ACTION_UP
+            if(blockSwipeDirection){
+                onSwipeEnd()
             }
-
-
-            if (blockSwipeDirection)
-                if (dX < -actionOffset){}
-
             false
         }
     }
 
+    fun onSwipeEnd(){
+        isItemDraggedToAction = false
+    }
+
     var isItemDraggedToAction = false
+
 }

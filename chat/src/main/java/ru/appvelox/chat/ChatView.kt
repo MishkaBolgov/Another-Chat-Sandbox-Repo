@@ -1,13 +1,16 @@
 package ru.appvelox.chat
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
+import android.util.Log
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import ru.appvelox.chat.model.Message
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
-    private val adapter = MessageAdapter()
+    private val appearance = Appearance()
+    private val adapter = MessageAdapter(appearance)
 
     var onItemClickListener: OnItemClickListener?
         set(value) {
@@ -41,12 +44,25 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         val itemTouchHelper = ItemTouchHelper(swipeToReplyCallback)
         swipeToReplyCallback.itemTouchHelper = itemTouchHelper
         itemTouchHelper.attachToRecyclerView(this)
+        setSelectOnClick(true)
 
+        val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ChatView)
+        Log.d("mytag", "typedArray = ${typedArray.getColor(R.styleable.ChatView_some_custom_attr, Color.RED)}")
+
+    }
+
+    fun setSelectOnClick(b: Boolean){
+        if (b)
+            adapter.onItemClickListener = object: OnItemClickListener{
+                override fun onClick(message: Message) {
+                    adapter.addSelectedMessage(message)
+                }
+            }
     }
 
     fun addMessage(message: Message) {
         adapter.addNewMessage(message)
-//        layoutManager?.scrollToPosition(adapter.getLastMessageIndex())
+        layoutManager?.scrollToPosition(adapter.getLastMessageIndex())
     }
 
     fun setCurrentUserId(id: Long) {

@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
             }
             chatView.onItemLongClickListener = object : OnItemLongClickListener {
                 override fun onClick(message: Message) {
-                    Toast.makeText(this@MainActivity, "Huy #${message.getId()}", Toast.LENGTH_SHORT).show()
                 }
             }
         }

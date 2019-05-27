@@ -1,9 +1,8 @@
 package ru.appvelox.chat
 
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,23 +11,20 @@ import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
-import kotlin.reflect.KProperty
+import kotlin.math.log
 
-class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
+class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageViewHolder>() {
     var loadMoreListener: ChatView.LoadMoreListener? = null
 
     var currentUserId: Long? = null
-    var messageBackgroundCornerRadius = 30f
-    var incomingMessageBackgroundColor = Color.argb(20, 33, 150, 243)
-    var outgoingMessageBackgroundColor = Color.argb(20, 76, 175, 80)
 
     var oldDataLoading = false
 
     var onItemClickListener: OnItemClickListener? = null
-    set(value) {
-        notifyDataSetChanged()
-        field = value
-    }
+        set(value) {
+            notifyDataSetChanged()
+            field = value
+        }
 
     var onItemLongClickListener: OnItemLongClickListener? = null
         set(value) {
@@ -36,30 +32,20 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
             field = value
         }
 
-    val incomingMessageBackground = GradientDrawable().apply {
-        setColor(outgoingMessageBackgroundColor)
-        val radius = messageBackgroundCornerRadius
-        cornerRadii = floatArrayOf(radius, radius, 0f, 0f, radius, radius, radius, radius)
-    }
-
-    val outgoingMessageBackground = GradientDrawable().apply {
-        setColor(incomingMessageBackgroundColor)
-        val radius = messageBackgroundCornerRadius
-        cornerRadii = floatArrayOf(0f, 0f, radius, radius, radius, radius, radius, radius)
-    }
-
     var outgoingMessageLayout = R.layout.item_incoming_message
     var incomingMessageLayout = R.layout.item_outgoing_message
 
     private val messageList = mutableListOf<Message>()
+    private val selectedMessageList = mutableListOf<Message>()
 
     fun addNewMessage(message: Message) {
+
         messageList.add(message)
         notifyItemInserted(messageList.indexOf(message))
     }
 
     fun addOldMessage(messages: List<Message>) {
-        messages.forEach {message ->
+        messages.forEach { message ->
             messageList.add(0, message)
         }
 
@@ -71,6 +57,15 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
             )
             oldDataLoading = false
         }
+    }
+
+    fun addSelectedMessage(message: Message) {
+        if (selectedMessageList.contains(message))
+            selectedMessageList.remove(message)
+        else
+            selectedMessageList.add(message)
+
+        notifyItemChanged(messageList.indexOf(message), null)
     }
 
     companion object {
@@ -90,12 +85,12 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         ++counter
 
         when (viewType) {
-            MessageType.INCOMING.type -> view.applyIncomingStyle()
-            MessageType.OUTGOING.type -> view.applyOutgoingStyle()
+            MessageType.INCOMING.type -> view.applyIncomingAppearance()
+            MessageType.OUTGOING.type -> view.applyOutgoingAppearance()
         }
 
         val viewHolder = MessageViewHolder(view).apply {
-            setIsRecyclable(false)
+//            setIsRecyclable(false)
         }
 
         return viewHolder
@@ -106,13 +101,14 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messageList[position]
 
-        onItemClickListener?.let {listener ->
+
+        onItemClickListener?.let { listener ->
             holder.itemView.setOnClickListener {
                 listener.onClick(message)
             }
         }
 
-        onItemLongClickListener?.let {listener ->
+        onItemLongClickListener?.let { listener ->
             holder.itemView.setOnLongClickListener {
                 listener.onClick(message)
                 true
@@ -131,6 +127,9 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         val showMessageDate = daysBetweenMessages != 0
 
         holder.bind(message, showMessageDate)
+
+//        if (selectedMessageList.contains(message))
+
     }
 
     fun getLastMessageIndex(): Int {
@@ -138,26 +137,30 @@ class MessageAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        val messageAuthorId = messageList[position].getAuthor().getId()
+        val message = messageList[position]
+        val messageAuthorId = message.getAuthor().getId()
 
         return if (messageAuthorId == currentUserId)
-            MessageType.INCOMING.type
+                MessageType.INCOMING.type
         else
-            MessageType.OUTGOING.type
+                MessageType.OUTGOING.type
     }
 
     enum class MessageType(val type: Int) {
         INCOMING(0), OUTGOING(1)
     }
 
-    private fun View.applyOutgoingStyle() {
-        outgoingMessageBackground.constantState?.let {
+
+    private fun View.applyOutgoingAppearance() {
+        Log.d("mylog", "this.contentContainer.background = ${this.contentContainer.background}")
+
+        appearance.outgoingDeselectedMessageBackground.constantState?.let {
             this.contentContainer.background = it.newDrawable().mutate()
         }
     }
 
-    private fun View.applyIncomingStyle() {
-        incomingMessageBackground.constantState?.let {
+    private fun View.applyIncomingAppearance() {
+        appearance.incomingMessageStateBackground.constantState?.let {
             this.contentContainer.background = it.newDrawable().mutate()
         }
     }

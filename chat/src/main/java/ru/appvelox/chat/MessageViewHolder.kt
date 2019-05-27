@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import kotlinx.android.synthetic.main.item_incoming_message.view.authorName
 import kotlinx.android.synthetic.main.item_incoming_message.view.messageText
 import kotlinx.android.synthetic.main.item_incoming_message.view.time
+import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
 import ru.appvelox.chat.model.Message
 import java.text.SimpleDateFormat
 
@@ -22,6 +23,9 @@ class MessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
     init {
         ++counter
+        view.imageViewLeftSwipeActionIcon?.let{
+            it.imageAlpha = 0
+        }
     }
 
     fun bind(message: Message, showMessageDate: Boolean = false) {
@@ -39,5 +43,7 @@ class MessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
         if(showMessageDate)
             itemView.dateContainer.visibility = View.VISIBLE
+
+
     }
 }

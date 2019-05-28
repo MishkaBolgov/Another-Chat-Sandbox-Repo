@@ -19,9 +19,9 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
     var itemTouchHelper: ItemTouchHelper? = null
     private var blockSwipeDirection = true
-    private var actionOffset = 400
-    private var resetOffset = 200
-    private var actionIconAppearOffset = 100
+    private var actionOffset = 160
+    private var resetOffset = 80
+    private var actionIconAppearOffset = 80
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         return makeMovementFlags(0, ItemTouchHelper.LEFT)
@@ -60,11 +60,10 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-
         setTouchListener(recyclerView)
 
         if(dX < -actionOffset && !isItemDraggedToAction) {
-            (recyclerView.context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(50)
+            (recyclerView.context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(20)
             isItemDraggedToAction = true
 //                itemTouchHelper?.attachToRecyclerView(null)
         }
@@ -73,6 +72,9 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
         if(dX > -resetOffset)
             isItemDraggedToAction = false
+
+        if(dX == 0f)
+            viewHolder.itemView.imageViewLeftSwipeActionIcon.imageAlpha = 0
 
         if(dX < -actionIconAppearOffset) {
             val progress = (dX + actionIconAppearOffset) / (actionOffset - actionIconAppearOffset)
@@ -118,6 +120,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
     }
 
 
+
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         getDefaultUIUtil().clearView(viewHolder.itemView.messageContainer)
     }
@@ -143,6 +146,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
     fun onSwipeEnd(){
         isItemDraggedToAction = false
+
     }
 
     var isItemDraggedToAction = false

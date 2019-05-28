@@ -42,6 +42,14 @@ object MessageGenerator {
     var nextId = 0L
         get() = field++
 
+
+    var previousDate = Date()
+        get() {
+            val currentDate = field
+            field = Date(field.time - Random.nextLong(44_000_000))
+            return currentDate
+        }
+
     var nextDate = Date()
         get() {
             val currentDate = field
@@ -49,7 +57,9 @@ object MessageGenerator {
             return currentDate
         }
 
-    fun generateMessage(): Message {
+    val messagesList = mutableListOf<Message>()
+
+    fun generateMessage(oldMessages: Boolean): Message {
         return object : Message {
 
             private val mId = nextId
@@ -60,7 +70,15 @@ object MessageGenerator {
                 else -> user3
             }
             private val mMessageText = MessageGenerator.generateMessageText(Random.nextInt(20))
-            private val mDate = nextDate
+            private val mDate = if (oldMessages) previousDate else nextDate
+            private val repliedOn = if (Random.nextInt(5) == 0)
+                null
+            else {
+                if (messagesList.isEmpty())
+                    null
+                else
+                    messagesList[Random.nextInt(messagesList.size)]
+            }
 
             init {
                 ++MainActivity.counter
@@ -81,7 +99,11 @@ object MessageGenerator {
             override fun getDate(): Date {
                 return mDate
             }
-        }
+
+            override fun getRepliedMessage(): Message? {
+                return repliedOn
+            }
+        }.also { messagesList.add(it) }
     }
 
 

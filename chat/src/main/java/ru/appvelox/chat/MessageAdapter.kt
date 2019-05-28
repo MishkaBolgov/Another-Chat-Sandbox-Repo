@@ -6,12 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
 import kotlin.math.log
+import kotlin.random.Random
 
 class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageViewHolder>() {
     var loadMoreListener: ChatView.LoadMoreListener? = null
@@ -68,10 +70,6 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
         notifyItemChanged(messageList.indexOf(message), null)
     }
 
-    companion object {
-        var counter = 0
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
         val messageLayout = when (viewType) {
@@ -82,16 +80,12 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
 
         val view = LayoutInflater.from(parent.context).inflate(messageLayout, parent, false)
 
-        ++counter
-
         when (viewType) {
             MessageType.INCOMING.type -> view.applyIncomingAppearance()
             MessageType.OUTGOING.type -> view.applyOutgoingAppearance()
         }
 
-        val viewHolder = MessageViewHolder(view).apply {
-//            setIsRecyclable(false)
-        }
+        val viewHolder = MessageViewHolder(view)
 
         return viewHolder
     }
@@ -101,15 +95,14 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messageList[position]
 
-
         onItemClickListener?.let { listener ->
-            holder.itemView.setOnClickListener {
+            holder.itemView.contentContainer.setOnClickListener {
                 listener.onClick(message)
             }
         }
 
         onItemLongClickListener?.let { listener ->
-            holder.itemView.setOnLongClickListener {
+            holder.itemView.contentContainer.setOnLongClickListener {
                 listener.onClick(message)
                 true
             }
@@ -128,7 +121,20 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
 
         holder.bind(message, showMessageDate)
 
-//        if (selectedMessageList.contains(message))
+
+        if (selectedMessageList.contains(message))
+            if (message.isIncoming())
+                holder.itemView.applyOutgoingSelectedAppearance()
+            else
+                holder.itemView.applyIncomingSelectedAppearance()
+        else
+            if (message.isIncoming())
+                holder.itemView.applyIncomingAppearance()
+            else
+                holder.itemView.applyOutgoingAppearance()
+
+
+
 
     }
 
@@ -136,14 +142,15 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
         return messageList.lastIndex
     }
 
-    override fun getItemViewType(position: Int): Int {
-        val message = messageList[position]
-        val messageAuthorId = message.getAuthor().getId()
-
-        return if (messageAuthorId == currentUserId)
-                MessageType.INCOMING.type
+    override fun getItemViewType(position: Int) =
+        if (messageList[position].isIncoming())
+            MessageType.INCOMING.type
         else
-                MessageType.OUTGOING.type
+            MessageType.OUTGOING.type
+
+    private fun Message.isIncoming(): Boolean {
+        val messageAuthorId = getAuthor().getId()
+        return messageAuthorId == currentUserId
     }
 
     enum class MessageType(val type: Int) {
@@ -152,21 +159,31 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
 
 
     private fun View.applyOutgoingAppearance() {
-        Log.d("mylog", "this.contentContainer.background = ${this.contentContainer.background}")
-
         appearance.outgoingDeselectedMessageBackground.constantState?.let {
             this.contentContainer.background = it.newDrawable().mutate()
         }
     }
 
     private fun View.applyIncomingAppearance() {
-        appearance.incomingMessageStateBackground.constantState?.let {
+        appearance.incomingDeselectedMessageBackground.constantState?.let {
+            this.contentContainer.background = it.newDrawable().mutate()
+        }
+    }
+
+    private fun View.applyOutgoingSelectedAppearance() {
+        appearance.outgoingSelectedMessageBackground.constantState?.let {
+            this.contentContainer.background = it.newDrawable().mutate()
+        }
+    }
+
+    private fun View.applyIncomingSelectedAppearance() {
+        appearance.incomingSelectedMessageBackground.constantState?.let {
             this.contentContainer.background = it.newDrawable().mutate()
         }
     }
 
     fun requestPreviousMessagesFromListener() {
-        loadMoreListener?.requestPreviousMessages(2, messageList.size, object : ChatView.LoadMoreCallback {
+        loadMoreListener?.requestPreviousMessages(20, messageList.size, object : ChatView.LoadMoreCallback {
             override fun onResult(messages: List<Message>) {
                 oldDataLoading = true
                 addOldMessage(messages)

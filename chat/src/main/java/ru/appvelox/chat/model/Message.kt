@@ -8,4 +8,5 @@ interface Message {
     fun getText(): String
     fun getAuthor(): Author
     fun getDate(): Date
+    fun getRepliedMessage(): Message?
 }

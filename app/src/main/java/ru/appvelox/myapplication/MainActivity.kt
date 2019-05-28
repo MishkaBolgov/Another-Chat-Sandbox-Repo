@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         ) {
             val messages = mutableListOf<Message>()
             repeat(count) {
-                messages.add(MessageGenerator.generateMessage())
+                messages.add(MessageGenerator.generateMessage(true))
             }
             AsyncTask.execute {
                 Thread.sleep(1000)
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         chatView.setCurrentUserId(MessageGenerator.user1.getId())
 
         button1.setOnClickListener {
-            chatView.addMessage(MessageGenerator.generateMessage())
+            chatView.addMessage(MessageGenerator.generateMessage(false))
         }
 
         button2.setOnClickListener {

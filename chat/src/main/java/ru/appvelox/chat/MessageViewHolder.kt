@@ -13,17 +13,18 @@ import kotlinx.android.synthetic.main.item_incoming_message.view.authorName
 import kotlinx.android.synthetic.main.item_incoming_message.view.messageText
 import kotlinx.android.synthetic.main.item_incoming_message.view.time
 import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
+import kotlinx.android.synthetic.main.reply.view.*
 import ru.appvelox.chat.model.Message
 import java.text.SimpleDateFormat
 
-class MessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
-    companion object{
+class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    companion object {
         var counter = 0
     }
 
     init {
         ++counter
-        view.imageViewLeftSwipeActionIcon?.let{
+        view.imageViewLeftSwipeActionIcon?.let {
             it.imageAlpha = 0
         }
     }
@@ -41,9 +42,22 @@ class MessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
                 .into(it)
         }
 
-        if(showMessageDate)
+        if (showMessageDate)
             itemView.dateContainer.visibility = View.VISIBLE
+        else
+            itemView.dateContainer.visibility = View.GONE
 
+        val replyMessage = message.getRepliedMessage()
+        if(replyMessage == null){
+            if (itemView.replyContainer != null)
+                itemView.replyContainer.visibility = View.GONE
+        } else {
+            if (itemView.replyContainer != null) {
+                itemView.replyContainer.visibility = View.VISIBLE
+                itemView.replyName.text = replyMessage.getAuthor().getName()
+                itemView.replyMessage.text = replyMessage.getText()
+            }
+        }
 
     }
 }

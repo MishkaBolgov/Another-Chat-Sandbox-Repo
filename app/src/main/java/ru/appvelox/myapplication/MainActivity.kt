@@ -41,6 +41,11 @@ class MainActivity : AppCompatActivity() {
 
         chatView.setCurrentUserId(MessageGenerator.user1.getId())
 
+
+        chatView.addMessage(MessageGenerator.generateMessage(false))
+        chatView.addMessage(MessageGenerator.generateMessage(false))
+        chatView.addMessage(MessageGenerator.generateMessage(false))
+
         button1.setOnClickListener {
             chatView.addMessage(MessageGenerator.generateMessage(false))
         }

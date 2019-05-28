@@ -25,7 +25,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
             <include layout="@layout/avatar"/>
         </FrameLayout>
@@ -37,14 +39,12 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/avatarContainer">
-
+                app:layout_constraintStart_toStartOf="parent">
 
             <TextView
                     android:id="@+id/authorName"
                     android:text="Billy Bob"
                     style="@style/Name"
-                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
@@ -53,10 +53,14 @@
                     android:id="@+id/replyContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
                     android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:visibility="gone"
+                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintTop_toBottomOf="@id/authorName"
-                    app:layout_constraintStart_toStartOf="parent">
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
 
                 <include layout="@layout/reply"/>
 

@@ -10,8 +10,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.avatar.view.*
-import kotlinx.android.synthetic.main.item_incoming_message.view.*
+import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
 import kotlin.math.abs
 

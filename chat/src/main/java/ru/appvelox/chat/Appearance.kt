@@ -11,29 +11,30 @@ class Appearance {
     var outgoingMessageBackgroundColor = Color.argb(20, 76, 175, 80)
     var incomingSelectedMessageBackgroundColor = Color.argb(20, 98, 50, 43)
     var outgoingSelectedMessageBackgroundColor = Color.argb(20, 98, 75, 180)
+    var replyAuthorNameColor = Color.DKGRAY
 
     val incomingDeselectedMessageBackground = GradientDrawable().apply {
         setColor(outgoingMessageBackgroundColor)
         val radius = messageBackgroundCornerRadius
-        cornerRadii = floatArrayOf(radius, radius, 0f, 0f, radius, radius, radius, radius)
+        cornerRadii = floatArrayOf(0f, 0f, radius, radius, radius, radius, radius, radius)
     }
 
     val outgoingDeselectedMessageBackground = GradientDrawable().apply {
         setColor(incomingMessageBackgroundColor)
         val radius = messageBackgroundCornerRadius
-        cornerRadii = floatArrayOf(0f, 0f, radius, radius, radius, radius, radius, radius)
+        cornerRadii = floatArrayOf(radius, radius, 0f, 0f, radius, radius, radius, radius)
     }
 
     val incomingSelectedMessageBackground = GradientDrawable().apply {
         setColor(outgoingSelectedMessageBackgroundColor)
         val radius = messageBackgroundCornerRadius
-        cornerRadii = floatArrayOf(radius, radius, 0f, 0f, radius, radius, radius, radius)
+        cornerRadii = floatArrayOf(0f, 0f, radius, radius, radius, radius, radius, radius)
     }
 
     val outgoingSelectedMessageBackground = GradientDrawable().apply {
         setColor(incomingSelectedMessageBackgroundColor)
         val radius = messageBackgroundCornerRadius
-        cornerRadii = floatArrayOf(0f, 0f, radius, radius, radius, radius, radius, radius)
+        cornerRadii = floatArrayOf(radius, radius, 0f, 0f, radius, radius, radius, radius)
     }
 
     val incomingMessageStateBackground: Drawable

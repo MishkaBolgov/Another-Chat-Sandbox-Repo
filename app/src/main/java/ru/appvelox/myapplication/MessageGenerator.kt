@@ -71,7 +71,7 @@ object MessageGenerator {
             }
             private val mMessageText = MessageGenerator.generateMessageText(Random.nextInt(20))
             private val mDate = if (oldMessages) previousDate else nextDate
-            private val repliedOn = if (Random.nextInt(5) == 0)
+            private val repliedOn = if (Random.nextInt(6) != 0)
                 null
             else {
                 if (messagesList.isEmpty())

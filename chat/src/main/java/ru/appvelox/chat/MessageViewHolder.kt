@@ -7,11 +7,7 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import kotlinx.android.synthetic.main.avatar.view.*
 import kotlinx.android.synthetic.main.date.view.*
-import kotlinx.android.synthetic.main.item_outgoing_message.view.*
-import kotlinx.android.synthetic.main.item_incoming_message.view.*
-import kotlinx.android.synthetic.main.item_incoming_message.view.authorName
-import kotlinx.android.synthetic.main.item_incoming_message.view.messageText
-import kotlinx.android.synthetic.main.item_incoming_message.view.time
+import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
 import kotlinx.android.synthetic.main.reply.view.*
 import ru.appvelox.chat.model.Message
@@ -30,7 +26,7 @@ class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(message: Message, showMessageDate: Boolean = false) {
-        itemView.authorName.text = message.getAuthor().getName() + " #${message.getId()}"
+        itemView.authorName.text = message.getAuthor().getName()
         itemView.messageText.text = message.getText()
         itemView.time.text = SimpleDateFormat("HH:mm").format(message.getDate())
         itemView.date.text = SimpleDateFormat("dd MMM").format(message.getDate())

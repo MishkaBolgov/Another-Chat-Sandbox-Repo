@@ -6,9 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_incoming_message.view.*
+import kotlinx.android.synthetic.main.item_message.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
@@ -33,9 +34,6 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
             notifyDataSetChanged()
             field = value
         }
-
-    var outgoingMessageLayout = R.layout.item_incoming_message
-    var incomingMessageLayout = R.layout.item_outgoing_message
 
     private val messageList = mutableListOf<Message>()
     private val selectedMessageList = mutableListOf<Message>()
@@ -72,13 +70,7 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
-        val messageLayout = when (viewType) {
-            MessageType.INCOMING.type -> incomingMessageLayout
-            MessageType.OUTGOING.type -> outgoingMessageLayout
-            else -> 0 // todo: fix this bullshit
-        }
-
-        val view = LayoutInflater.from(parent.context).inflate(messageLayout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
 
         when (viewType) {
             MessageType.INCOMING.type -> view.applyIncomingAppearance()
@@ -124,16 +116,14 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
 
         if (selectedMessageList.contains(message))
             if (message.isIncoming())
-                holder.itemView.applyOutgoingSelectedAppearance()
-            else
                 holder.itemView.applyIncomingSelectedAppearance()
+            else
+                holder.itemView.applyOutgoingSelectedAppearance()
         else
             if (message.isIncoming())
                 holder.itemView.applyIncomingAppearance()
             else
                 holder.itemView.applyOutgoingAppearance()
-
-
 
 
     }
@@ -150,27 +140,56 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
 
     private fun Message.isIncoming(): Boolean {
         val messageAuthorId = getAuthor().getId()
-        return messageAuthorId == currentUserId
+        return messageAuthorId != currentUserId
     }
 
     enum class MessageType(val type: Int) {
         INCOMING(0), OUTGOING(1)
     }
 
-
     private fun View.applyOutgoingAppearance() {
+        applyOutgoingConstraints()
         appearance.outgoingDeselectedMessageBackground.constantState?.let {
             this.contentContainer.background = it.newDrawable().mutate()
         }
     }
 
     private fun View.applyIncomingAppearance() {
+        applyIncomingConstraints()
         appearance.incomingDeselectedMessageBackground.constantState?.let {
             this.contentContainer.background = it.newDrawable().mutate()
         }
     }
 
-    private fun View.applyOutgoingSelectedAppearance() {
+    private fun View.applyIncomingConstraints(){
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(messageContainer as ConstraintLayout)
+        constraintSet.setHorizontalBias(avatarContainer.id, 0f)
+        constraintSet.setHorizontalBias(contentContainer.id, 0f)
+        constraintSet.connect(contentContainer.id, ConstraintSet.START, avatarContainer.id, ConstraintSet.END)
+        constraintSet.applyTo(messageContainer)
+
+        val constraintSet2 = ConstraintSet()
+        constraintSet2.clone(contentContainer as ConstraintLayout)
+        constraintSet2.setHorizontalBias(authorName.id, 0f)
+        constraintSet2.applyTo(contentContainer)
+    }
+
+    private fun View.applyOutgoingConstraints() {
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(messageContainer as ConstraintLayout)
+        constraintSet.setHorizontalBias(avatarContainer.id, 1f)
+        constraintSet.setHorizontalBias(contentContainer.id, 1f)
+        constraintSet.connect(contentContainer.id, ConstraintSet.END, avatarContainer.id, ConstraintSet.START)
+        constraintSet.applyTo(messageContainer)
+
+        val constraintSet2 = ConstraintSet()
+        constraintSet2.clone(contentContainer as ConstraintLayout)
+        constraintSet2.setHorizontalBias(authorName.id, 1f)
+        constraintSet2.applyTo(contentContainer)
+    }
+
+        private fun View.applyOutgoingSelectedAppearance() {
         appearance.outgoingSelectedMessageBackground.constantState?.let {
             this.contentContainer.background = it.newDrawable().mutate()
         }

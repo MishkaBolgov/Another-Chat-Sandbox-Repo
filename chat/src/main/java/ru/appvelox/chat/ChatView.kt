@@ -9,22 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.appvelox.chat.model.Message
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
-    private val appearance = Appearance()
-    private val adapter = MessageAdapter(appearance)
+    private val adapter = MessageAdapter()
 
-    var onItemClickListener: OnItemClickListener?
-        set(value) {
-            adapter.onItemClickListener = value
+    fun setOnItemClickListener(listener: OnItemClickListener?) {
+        adapter.onItemClickListener = listener
+    }
+
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener?) {
+            adapter.onItemLongClickListener = listener
         }
-        get() = adapter.onItemClickListener
 
-    var onItemLongClickListener: OnItemLongClickListener?
-        set(value) {
-            adapter.onItemLongClickListener = value
-        }
-        get() = adapter.onItemLongClickListener
-
-    fun setLoadMoreListener(listener: LoadMoreListener) {
+    fun setLoadMoreListener(listener: LoadMoreListener?) {
         adapter.loadMoreListener = listener
     }
 
@@ -44,20 +39,21 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         val itemTouchHelper = ItemTouchHelper(swipeToReplyCallback)
         swipeToReplyCallback.itemTouchHelper = itemTouchHelper
         itemTouchHelper.attachToRecyclerView(this)
-        setSelectOnClick(true)
 
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ChatView)
-        Log.d("mytag", "typedArray = ${typedArray.getColor(R.styleable.ChatView_some_custom_attr, Color.RED)}")
-
     }
 
-    fun setSelectOnClick(b: Boolean){
+    fun setSelectOnClick(b: Boolean) {
         if (b)
-            adapter.onItemClickListener = object: OnItemClickListener{
+            adapter.onItemClickListener = object : OnItemClickListener {
                 override fun onClick(message: Message) {
                     adapter.addSelectedMessage(message)
                 }
             }
+        else {
+            adapter.onItemClickListener = null
+            adapter.eraseSelectedMessages()
+        }
     }
 
     fun addMessage(message: Message) {
@@ -77,19 +73,43 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.addOldMessage(messages)
     }
 
+
+    fun setMessageBackgroundCornerRadius(radius: Float){
+        adapter.appearance.messageBackgroundCornerRadius = radius
+        adapter.notifyAppearanceChanged()
+    }
+
+    fun setIncomingMessageBackgroundColor(color: Int){
+        adapter.appearance.incomingMessageBackgroundColor = color
+        adapter.notifyAppearanceChanged()
+    }
+
+    fun setOutgoingMessageBackgroundColor(color: Color){
+
+    }
+
+    fun setIncomingSelectedMessageBackgroundColor(color: Color){
+
+    }
+
+    fun setOutgoingSelectedMessageBackgroundColor(color: Color){
+
+    }
+
+
+
+
+
     interface LoadMoreCallback {
         fun onResult(messages: List<Message>)
     }
 
-
-}
-
-interface OnItemClickListener {
-    fun onClick(message: Message)
-}
-
-interface OnItemLongClickListener {
-    fun onClick(message: Message) {
-
+    interface OnItemClickListener {
+        fun onClick(message: Message)
     }
+
+    interface OnItemLongClickListener {
+        fun onLongClick(message: Message)
+    }
+
 }

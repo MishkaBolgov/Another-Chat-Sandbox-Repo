@@ -4,7 +4,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
     <View
-            android:id="@+id/line"
+            android:id="@+id/replyLine"
             android:layout_height="0dp"
             android:layout_width="2dp"
             android:background="@android:color/holo_blue_dark"
@@ -13,14 +13,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
     <TextView
-            android:id="@+id/replyName"
+            android:id="@+id/replyAuthorName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
-            android:textStyle="bold"
             android:textColor="#193970"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/line"/>
+            app:layout_constraintStart_toEndOf="@id/replyLine"/>
     <TextView
             android:id="@+id/replyMessage"
             android:layout_width="wrap_content"
@@ -29,8 +28,8 @@
             android:layout_marginLeft="4dp"
             android:layout_marginTop="4dp"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintTop_toBottomOf="@id/replyName"
+            app:layout_constraintTop_toBottomOf="@id/replyAuthorName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/line"/>
+            app:layout_constraintStart_toEndOf="@id/replyLine"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

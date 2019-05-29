@@ -1,5 +1,6 @@
 package ru.appvelox.chat
 
+import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -10,26 +11,27 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_message.view.*
+import kotlinx.android.synthetic.main.reply.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
-import kotlin.math.log
-import kotlin.random.Random
 
-class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageViewHolder>() {
+internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
     var loadMoreListener: ChatView.LoadMoreListener? = null
 
     var currentUserId: Long? = null
 
     var oldDataLoading = false
 
-    var onItemClickListener: OnItemClickListener? = null
+    val appearance = Appearance()
+
+    var onItemClickListener: ChatView.OnItemClickListener? = null
         set(value) {
             notifyDataSetChanged()
             field = value
         }
 
-    var onItemLongClickListener: OnItemLongClickListener? = null
+    var onItemLongClickListener: ChatView.OnItemLongClickListener? = null
         set(value) {
             notifyDataSetChanged()
             field = value
@@ -39,8 +41,9 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
     private val selectedMessageList = mutableListOf<Message>()
 
     fun addNewMessage(message: Message) {
-
         messageList.add(message)
+
+
         notifyItemInserted(messageList.indexOf(message))
     }
 
@@ -68,6 +71,18 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
         notifyItemChanged(messageList.indexOf(message), null)
     }
 
+
+    fun eraseSelectedMessages() {
+        val messages = mutableListOf<Message>()
+
+        selectedMessageList.forEach { messages.add(it) }
+
+        selectedMessageList.clear()
+
+        messages.forEach { notifyItemChanged(messageList.indexOf(it)) }
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
@@ -87,15 +102,26 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messageList[position]
 
-        onItemClickListener?.let { listener ->
-            holder.itemView.contentContainer.setOnClickListener {
-                listener.onClick(message)
+        if (onItemClickListener == null) {
+            holder.itemView.messageContainer.setOnClickListener(null)
+        } else {
+            holder.itemView.messageContainer.setOnClickListener {
+                onItemClickListener?.onClick(message)
+            }
+        }
+
+        if (onItemLongClickListener == null) {
+            holder.itemView.messageContainer.setOnLongClickListener(null)
+        } else {
+            holder.itemView.messageContainer.setOnLongClickListener {
+                onItemLongClickListener?.onLongClick(message)
+                true
             }
         }
 
         onItemLongClickListener?.let { listener ->
-            holder.itemView.contentContainer.setOnLongClickListener {
-                listener.onClick(message)
+            holder.itemView.messageContainer.setOnLongClickListener {
+                listener.onLongClick(message)
                 true
             }
         }
@@ -148,56 +174,75 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
     }
 
     private fun View.applyOutgoingAppearance() {
+        applyCommonStyle()
         applyOutgoingConstraints()
-        appearance.outgoingDeselectedMessageBackground.constantState?.let {
-            this.contentContainer.background = it.newDrawable().mutate()
+        appearance.outgoingMessageBackground.constantState?.let {
+            this.messageContainer.background = it.newDrawable().mutate()
         }
     }
 
     private fun View.applyIncomingAppearance() {
+        applyCommonStyle()
         applyIncomingConstraints()
-        appearance.incomingDeselectedMessageBackground.constantState?.let {
-            this.contentContainer.background = it.newDrawable().mutate()
+        appearance.incomingMessageBackground.constantState?.let {
+            this.messageContainer.background = it.newDrawable().mutate()
         }
     }
 
-    private fun View.applyIncomingConstraints(){
+    private fun View.applyCommonStyle() {
+        authorName.setTextColor(appearance.authorNameColor)
+        authorName.textSize = appearance.authorNameSize
+
+        message.setTextColor(appearance.messageColor)
+        message.textSize = appearance.messageSize
+
+
+        replyAuthorName.setTextColor(appearance.replyAuthorNameColor)
+        replyAuthorName.textSize = appearance.replyAuthorNameSize
+
+        replyMessage.setTextColor(appearance.replyMessageColor)
+        replyMessage.textSize = appearance.replyMessageSize
+
+        replyLine.setBackgroundColor(appearance.replyLineColor)
+    }
+
+    private fun View.applyIncomingConstraints() {
         val constraintSet = ConstraintSet()
-        constraintSet.clone(messageContainer as ConstraintLayout)
+        constraintSet.clone(contentContainer as ConstraintLayout)
         constraintSet.setHorizontalBias(avatarContainer.id, 0f)
-        constraintSet.setHorizontalBias(contentContainer.id, 0f)
-        constraintSet.connect(contentContainer.id, ConstraintSet.START, avatarContainer.id, ConstraintSet.END)
-        constraintSet.applyTo(messageContainer)
+        constraintSet.setHorizontalBias(messageContainer.id, 0f)
+        constraintSet.connect(messageContainer.id, ConstraintSet.START, avatarContainer.id, ConstraintSet.END)
+        constraintSet.applyTo(contentContainer)
 
         val constraintSet2 = ConstraintSet()
-        constraintSet2.clone(contentContainer as ConstraintLayout)
+        constraintSet2.clone(messageContainer as ConstraintLayout)
         constraintSet2.setHorizontalBias(authorName.id, 0f)
-        constraintSet2.applyTo(contentContainer)
+        constraintSet2.applyTo(messageContainer)
     }
 
     private fun View.applyOutgoingConstraints() {
         val constraintSet = ConstraintSet()
-        constraintSet.clone(messageContainer as ConstraintLayout)
+        constraintSet.clone(contentContainer as ConstraintLayout)
         constraintSet.setHorizontalBias(avatarContainer.id, 1f)
-        constraintSet.setHorizontalBias(contentContainer.id, 1f)
-        constraintSet.connect(contentContainer.id, ConstraintSet.END, avatarContainer.id, ConstraintSet.START)
-        constraintSet.applyTo(messageContainer)
+        constraintSet.setHorizontalBias(messageContainer.id, 1f)
+        constraintSet.connect(messageContainer.id, ConstraintSet.END, avatarContainer.id, ConstraintSet.START)
+        constraintSet.applyTo(contentContainer)
 
         val constraintSet2 = ConstraintSet()
-        constraintSet2.clone(contentContainer as ConstraintLayout)
+        constraintSet2.clone(messageContainer as ConstraintLayout)
         constraintSet2.setHorizontalBias(authorName.id, 1f)
-        constraintSet2.applyTo(contentContainer)
+        constraintSet2.applyTo(messageContainer)
     }
 
-        private fun View.applyOutgoingSelectedAppearance() {
+    private fun View.applyOutgoingSelectedAppearance() {
         appearance.outgoingSelectedMessageBackground.constantState?.let {
-            this.contentContainer.background = it.newDrawable().mutate()
+            this.messageContainer.background = it.newDrawable().mutate()
         }
     }
 
     private fun View.applyIncomingSelectedAppearance() {
         appearance.incomingSelectedMessageBackground.constantState?.let {
-            this.contentContainer.background = it.newDrawable().mutate()
+            this.messageContainer.background = it.newDrawable().mutate()
         }
     }
 
@@ -208,6 +253,10 @@ class MessageAdapter(val appearance: Appearance) : RecyclerView.Adapter<MessageV
                 addOldMessage(messages)
             }
         })
+    }
+
+    fun notifyAppearanceChanged() {
+        notifyDataSetChanged()
     }
 
 

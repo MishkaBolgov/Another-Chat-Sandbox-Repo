@@ -2,12 +2,8 @@ package ru.appvelox.chat
 
 import android.content.Context
 import android.graphics.Canvas
-import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Log
 import android.view.MotionEvent
-import android.view.View
-import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_message.view.*
@@ -84,7 +80,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
         getDefaultUIUtil().onDraw(
             c,
             recyclerView,
-            viewHolder.itemView.messageContainer,
+            viewHolder.itemView.contentContainer,
             dX,
             dY,
             actionState,
@@ -101,7 +97,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        viewHolder?.itemView?.messageContainer?.let {
+        viewHolder?.itemView?.contentContainer?.let {
 
             if(isItemDraggedToAction)
                 return
@@ -121,14 +117,14 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-        getDefaultUIUtil().clearView(viewHolder.itemView.messageContainer)
+        getDefaultUIUtil().clearView(viewHolder.itemView.contentContainer)
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         super.onSelectedChanged(viewHolder, actionState)
 
         viewHolder?.let {
-            getDefaultUIUtil().onSelected(it.itemView.messageContainer)
+            getDefaultUIUtil().onSelected(it.itemView.contentContainer)
         }
 
     }

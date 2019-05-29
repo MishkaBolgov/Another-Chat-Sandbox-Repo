@@ -1,6 +1,7 @@
 package ru.appvelox.myapplication
 
 import android.graphics.Bitmap
+import android.util.Log
 import ru.appvelox.chat.model.Author
 import ru.appvelox.chat.model.Message
 import java.lang.StringBuilder
@@ -69,19 +70,15 @@ object MessageGenerator {
                 2 -> user3
                 else -> user3
             }
-            private val mMessageText = MessageGenerator.generateMessageText(Random.nextInt(20))
+            private val mMessageText = MessageGenerator.generateMessageText()
             private val mDate = if (oldMessages) previousDate else nextDate
-            private val repliedOn = if (Random.nextInt(6) != 0)
+            private val repliedOn = if (Random.nextInt(4) != 0)
                 null
             else {
                 if (messagesList.isEmpty())
                     null
                 else
                     messagesList[Random.nextInt(messagesList.size)]
-            }
-
-            init {
-                ++MainActivity.counter
             }
 
             override fun getId(): Long {

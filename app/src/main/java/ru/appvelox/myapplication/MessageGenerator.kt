@@ -11,32 +11,32 @@ import kotlin.random.Random
 object MessageGenerator {
 
     val user1 = object : Author {
-        override fun getName() = "Golfred"
+        override fun getName() = "Emma Stone"
 
         override fun getId() = 0L
 
         override fun getAvatar(): String {
-            return "https://images-na.ssl-images-amazon.com/images/I/719SroNweJL._SL1500_.jpg"
+            return "https://www.onthisday.com/images/people/emma-stone-medium.jpg"
         }
     }
 
     val user2 = object : Author {
-        override fun getName() = "Gretta Colossal"
+        override fun getName() = "Matthew McConaughey"
 
         override fun getId() = 1L
 
         override fun getAvatar(): String {
-            return "https://media.pitchfork.com/photos/5929bbb45e6ef95969322c92/1:1/w_320/c91b3bfd.jpg"
+            return "https://m.media-amazon.com/images/M/MV5BMTg0MDc3ODUwOV5BMl5BanBnXkFtZTcwMTk2NjY4Nw@@._V1_UX214_CR0,0,214,317_AL_.jpg"
         }
     }
 
     val user3 = object : Author {
-        override fun getName() = "Gogich"
+        override fun getName() = "Edward Norton"
 
         override fun getId() = 2L
 
         override fun getAvatar(): String {
-            return "https://upload.wikimedia.org/wikipedia/en/thumb/9/99/Process_-_Sampha_album.jpg/220px-Process_-_Sampha_album.jpg"
+            return "https://thumbor.forbes.com/thumbor/960x0/https%3A%2F%2Fblogs-images.forbes.com%2Fdannyboice%2Ffiles%2F2014%2F07%2FEN-by-KB-e1404325314835.jpg"
         }
     }
 
@@ -81,6 +81,9 @@ object MessageGenerator {
                     messagesList[Random.nextInt(messagesList.size)]
             }
 
+            private val mIsRead = Random.nextBoolean()
+            private val mIsSent = !mIsRead
+
             override fun getId(): Long {
                 return mId
             }
@@ -99,6 +102,14 @@ object MessageGenerator {
 
             override fun getRepliedMessage(): Message? {
                 return repliedOn
+            }
+
+            override fun isSent(): Boolean? {
+                return mIsSent
+            }
+
+            override fun isRead(): Boolean? {
+                return mIsRead
             }
         }.also { messagesList.add(it) }
     }

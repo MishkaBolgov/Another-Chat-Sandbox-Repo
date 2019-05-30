@@ -15,8 +15,11 @@ import kotlinx.android.synthetic.main.reply.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
+import kotlin.random.Random
 
 internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
+    var onReplyClickListener: ChatView.OnReplyClickListener? = null
+
     var loadMoreListener: ChatView.LoadMoreListener? = null
 
     var currentUserId: Long? = null
@@ -119,6 +122,12 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
             }
         }
 
+        holder.itemView.replyContainer.setOnClickListener {
+            message.getRepliedMessage()?.let {
+                onReplyClickListener?.onReplyClick(it)
+            }
+        }
+
         onItemLongClickListener?.let { listener ->
             holder.itemView.messageContainer.setOnLongClickListener {
                 listener.onLongClick(message)
@@ -176,17 +185,15 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
     private fun View.applyOutgoingAppearance() {
         applyCommonStyle()
         applyOutgoingConstraints()
-        appearance.outgoingMessageBackground.constantState?.let {
-            this.messageContainer.background = it.newDrawable().mutate()
-        }
+        isRead.visibility = View.VISIBLE
+        this.messageContainer.background = appearance.getOutgoingMessageBackground()
     }
 
     private fun View.applyIncomingAppearance() {
         applyCommonStyle()
         applyIncomingConstraints()
-        appearance.incomingMessageBackground.constantState?.let {
-            this.messageContainer.background = it.newDrawable().mutate()
-        }
+        isRead.visibility = View.GONE
+        this.messageContainer.background = appearance.getIncomingMessageBackground()
     }
 
     private fun View.applyCommonStyle() {
@@ -204,6 +211,9 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
         replyMessage.textSize = appearance.replyMessageSize
 
         replyLine.setBackgroundColor(appearance.replyLineColor)
+
+        isRead.setColorFilter(appearance.isReadColor)
+        isSent.setColorFilter(appearance.isSentColor)
     }
 
     private fun View.applyIncomingConstraints() {
@@ -235,13 +245,13 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
     }
 
     private fun View.applyOutgoingSelectedAppearance() {
-        appearance.outgoingSelectedMessageBackground.constantState?.let {
+        appearance.getOutgoingSelectedMessageBackground().constantState?.let {
             this.messageContainer.background = it.newDrawable().mutate()
         }
     }
 
     private fun View.applyIncomingSelectedAppearance() {
-        appearance.incomingSelectedMessageBackground.constantState?.let {
+        appearance.getIncomingSelectedMessageBackground().constantState?.let {
             this.messageContainer.background = it.newDrawable().mutate()
         }
     }
@@ -257,6 +267,22 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
 
     fun notifyAppearanceChanged() {
         notifyDataSetChanged()
+    }
+
+    fun getPositionOfMessage(message: Message): Int {
+        return messageList.indexOf(message)
+    }
+
+    fun deleteMessage(message: Message) {
+        val position = messageList.indexOf(message)
+        messageList.remove(message)
+        notifyItemRemoved(position)
+    }
+
+    fun updateMessage(message: Message) {
+        val index = messageList.indexOf( messageList.find { it.getId() == message.getId() })
+        messageList[index] = message
+        notifyItemChanged(index)
     }
 
 

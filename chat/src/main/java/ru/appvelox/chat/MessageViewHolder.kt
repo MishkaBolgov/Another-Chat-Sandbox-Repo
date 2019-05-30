@@ -53,5 +53,21 @@ class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             }
         }
 
+//        val isRead = message.isRead()
+//
+//        if (isRead == null || isRead == false){
+//            itemView.isRead.visibility = View.GONE
+//        } else {
+//            itemView.isRead.visibility = View.VISIBLE
+//        }
+
+//        val isSent = message.isSent()
+//
+//        if (isSent == null || isSent == false){
+//            itemView.isSent.visibility = View.GONE
+//        } else {
+//            itemView.isSent.visibility = View.VISIBLE
+//        }
+
     }
 }

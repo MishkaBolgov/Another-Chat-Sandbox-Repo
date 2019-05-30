@@ -16,8 +16,8 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
     }
 
     fun setOnItemLongClickListener(listener: OnItemLongClickListener?) {
-            adapter.onItemLongClickListener = listener
-        }
+        adapter.onItemLongClickListener = listener
+    }
 
     fun setLoadMoreListener(listener: LoadMoreListener?) {
         adapter.loadMoreListener = listener
@@ -41,6 +41,12 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         itemTouchHelper.attachToRecyclerView(this)
 
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ChatView)
+
+        adapter.onReplyClickListener = object: OnReplyClickListener{
+            override fun onReplyClick(message: Message) {
+                navigateToMessage(message)
+            }
+        }
     }
 
     fun setSelectOnClick(b: Boolean) {
@@ -65,6 +71,11 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.currentUserId = id
     }
 
+    fun navigateToMessage(message: Message) {
+        val scrollTo = adapter.getPositionOfMessage(message)
+        layoutManager?.scrollToPosition(scrollTo)
+    }
+
     interface LoadMoreListener {
         fun requestPreviousMessages(count: Int, alreadyLoadedMessagesCount: Int, callback: LoadMoreCallback)
     }
@@ -73,32 +84,90 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.addOldMessage(messages)
     }
 
+    fun deleteMessage(message: Message){
+        adapter.deleteMessage(message)
+    }
 
-    fun setMessageBackgroundCornerRadius(radius: Float){
+    fun updateMessage(message: Message){
+        adapter.updateMessage(message)
+    }
+
+    fun setMessageBackgroundCornerRadius(radius: Float) {
         adapter.appearance.messageBackgroundCornerRadius = radius
         adapter.notifyAppearanceChanged()
     }
 
-    fun setIncomingMessageBackgroundColor(color: Int){
+    fun setIncomingMessageBackgroundColor(color: Int) {
         adapter.appearance.incomingMessageBackgroundColor = color
         adapter.notifyAppearanceChanged()
     }
 
-    fun setOutgoingMessageBackgroundColor(color: Color){
-
+    fun setOutgoingMessageBackgroundColor(color: Int) {
+        adapter.appearance.outgoingMessageBackgroundColor = color
+        adapter.notifyAppearanceChanged()
     }
 
-    fun setIncomingSelectedMessageBackgroundColor(color: Color){
-
+    fun setIncomingSelectedMessageBackgroundColor(color: Int) {
+        adapter.appearance.incomingSelectedMessageBackgroundColor = color
+        adapter.notifyAppearanceChanged()
     }
 
-    fun setOutgoingSelectedMessageBackgroundColor(color: Color){
-
+    fun setOutgoingSelectedMessageBackgroundColor(color: Int) {
+        adapter.appearance.outgoingSelectedMessageBackgroundColor = color
+        adapter.notifyAppearanceChanged()
     }
 
+    fun setMessageTextSize(size: Float){
+        adapter.appearance.messageSize = size
+        adapter.notifyAppearanceChanged()
+    }
 
+    fun setAuthorTextSize(size: Float){
+        adapter.appearance.authorNameSize = size
+        adapter.notifyAppearanceChanged()
+    }
 
+    fun setReplyMessageTextSize(size: Float){
+        adapter.appearance.replyMessageSize = size
+        adapter.notifyAppearanceChanged()
+    }
 
+    fun setReplyAuthorTextSize(size: Float){
+        adapter.appearance.replyAuthorNameSize = size
+        adapter.notifyAppearanceChanged()
+    }
+
+   fun setAuthorTextColor(color: Int){
+       adapter.appearance.authorNameColor = color
+       adapter.notifyAppearanceChanged()
+   }
+   fun setMessageTextColor(color: Int){
+       adapter.appearance.messageColor = color
+       adapter.notifyAppearanceChanged()
+   }
+   fun setReplyAuthorTextColor(color: Int){
+       adapter.appearance.replyAuthorNameColor = color
+       adapter.notifyAppearanceChanged()
+   }
+   fun setReplyMessageTextColor(color: Int){
+       adapter.appearance.replyMessageColor = color
+       adapter.notifyAppearanceChanged()
+   }
+
+    fun setIsReadColor(color: Int){
+        adapter.appearance.isReadColor = color
+        adapter.notifyAppearanceChanged()
+    }
+
+    fun setIsSentColor(color: Int){
+        adapter.appearance.isSentColor = color
+        adapter.notifyAppearanceChanged()
+    }
+
+    fun setReplyLineColor(color: Int) {
+        adapter.appearance.replyLineColor = color
+        adapter.notifyAppearanceChanged()
+    }
 
     interface LoadMoreCallback {
         fun onResult(messages: List<Message>)
@@ -110,6 +179,10 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
 
     interface OnItemLongClickListener {
         fun onLongClick(message: Message)
+    }
+
+    internal interface OnReplyClickListener {
+        fun onReplyClick(message: Message)
     }
 
 }

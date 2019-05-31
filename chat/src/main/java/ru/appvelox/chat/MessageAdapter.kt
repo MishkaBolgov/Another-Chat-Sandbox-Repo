@@ -1,9 +1,7 @@
 package ru.appvelox.chat
 
-import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +13,9 @@ import kotlinx.android.synthetic.main.reply.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
-import kotlin.random.Random
 
-internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
+internal class MessageAdapter(val appearance: IAppearance): RecyclerView.Adapter<MessageViewHolder>() {
+
     var onReplyClickListener: ChatView.OnReplyClickListener? = null
 
     var loadMoreListener: ChatView.LoadMoreListener? = null
@@ -25,8 +23,6 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
     var currentUserId: Long? = null
 
     var oldDataLoading = false
-
-    val appearance = Appearance()
 
     var onItemClickListener: ChatView.OnItemClickListener? = null
         set(value) {
@@ -40,23 +36,26 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
             field = value
         }
 
-    private val messageList = mutableListOf<Message>()
-    private val selectedMessageList = mutableListOf<Message>()
+    var customMessageLayout: Int? = null
+
+    internal val messageList = mutableListOf<Message>()
+    internal val selectedMessageList = mutableListOf<Message>()
 
     fun addNewMessage(message: Message) {
         messageList.add(message)
-
-
         notifyItemInserted(messageList.indexOf(message))
     }
 
-    fun addOldMessage(messages: List<Message>) {
+    fun addOldMessages(messages: List<Message>) {
         messages.forEach { message ->
             messageList.add(0, message)
         }
 
-        Handler(Looper.getMainLooper()).post {
+        notifyMessagesInserted(messages)
+    }
 
+    fun notifyMessagesInserted(messages: List<Message>) {
+        Handler(Looper.getMainLooper()).post {
             notifyItemRangeInserted(
                 messageList.indexOf(messages.last()),
                 messages.size
@@ -65,7 +64,7 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
         }
     }
 
-    fun addSelectedMessage(message: Message) {
+    fun changeMessageSelection(message: Message) {
         if (selectedMessageList.contains(message))
             selectedMessageList.remove(message)
         else
@@ -88,7 +87,10 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
+        val view =  if(customMessageLayout == null)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
+        else
+            LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
 
         when (viewType) {
             MessageType.INCOMING.type -> view.applyIncomingAppearance()
@@ -260,7 +262,7 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
         loadMoreListener?.requestPreviousMessages(20, messageList.size, object : ChatView.LoadMoreCallback {
             override fun onResult(messages: List<Message>) {
                 oldDataLoading = true
-                addOldMessage(messages)
+                addOldMessages(messages)
             }
         })
     }
@@ -284,6 +286,4 @@ internal class MessageAdapter: RecyclerView.Adapter<MessageViewHolder>() {
         messageList[index] = message
         notifyItemChanged(index)
     }
-
-
 }

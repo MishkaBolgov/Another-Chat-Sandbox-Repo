@@ -1,15 +1,18 @@
 package ru.appvelox.chat
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
-import android.util.Log
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import ru.appvelox.chat.model.Message
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
-    private val adapter = MessageAdapter()
+
+    fun tt(): String{
+        return "real"
+    }
+
+    private val adapter = MessageAdapter(Appearance())
 
     fun setOnItemClickListener(listener: OnItemClickListener?) {
         adapter.onItemClickListener = listener
@@ -53,7 +56,7 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         if (b)
             adapter.onItemClickListener = object : OnItemClickListener {
                 override fun onClick(message: Message) {
-                    adapter.addSelectedMessage(message)
+                    adapter.changeMessageSelection(message)
                 }
             }
         else {
@@ -81,7 +84,7 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
     }
 
     fun addOldMessages(messages: List<Message>) {
-        adapter.addOldMessage(messages)
+        adapter.addOldMessages(messages)
     }
 
     fun deleteMessage(message: Message){

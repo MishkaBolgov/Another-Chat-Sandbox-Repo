@@ -11,4 +11,5 @@ interface Message {
     fun isSent(): Boolean?
     fun isRead(): Boolean?
     fun getRepliedMessage(): Message?
+    fun getImageUrl(): String?
 }

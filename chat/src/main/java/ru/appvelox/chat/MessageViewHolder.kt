@@ -53,6 +53,28 @@ class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             }
         }
 
+        if(message.getImageUrl() == null){
+            itemView.authorName.visibility = View.VISIBLE
+            itemView.message.visibility = View.VISIBLE
+            itemView.time.visibility = View.VISIBLE
+            itemView.date.visibility = View.VISIBLE
+
+            itemView.image.visibility = View.GONE
+        } else {
+            itemView.authorName.visibility = View.GONE
+            itemView.message.visibility = View.GONE
+            itemView.time.visibility = View.GONE
+            itemView.date.visibility = View.GONE
+            itemView.replyContainer.visibility = View.GONE
+            itemView.isRead.visibility = View.GONE
+
+            itemView.image.visibility = View.VISIBLE
+            Picasso.get()
+                .load(message.getImageUrl())
+                .into(itemView.image)
+
+        }
+
 //        val isRead = message.isRead()
 //
 //        if (isRead == null || isRead == false){

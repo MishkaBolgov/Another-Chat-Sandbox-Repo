@@ -84,6 +84,8 @@ object MessageGenerator {
             private val mIsRead = Random.nextBoolean()
             private val mIsSent = !mIsRead
 
+            private val mImageUrl = /*if(Random.nextInt(10) < 5) "https://i.ytimg.com/vi/BfCwN4iy6T8/maxresdefault.jpg" else*/ null
+
             override fun getId(): Long {
                 return mId
             }
@@ -110,6 +112,10 @@ object MessageGenerator {
 
             override fun isRead(): Boolean? {
                 return mIsRead
+            }
+
+            override fun getImageUrl(): String? {
+                return mImageUrl
             }
         }.also { messagesList.add(it) }
     }

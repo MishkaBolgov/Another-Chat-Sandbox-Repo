@@ -41,6 +41,17 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
+            <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="400dp"
+                    android:layout_height="300dp"
+                    android:visibility="gone"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
             <TextView
                     android:id="@+id/authorName"
                     android:text="Billy Bob"
@@ -94,7 +105,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>]
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        ]
 
         <ImageView
                 android:id="@+id/isSent"

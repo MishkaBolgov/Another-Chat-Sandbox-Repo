@@ -5,6 +5,8 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Adapter
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                 messages.add(MessageGenerator.generateMessage(true))
             }
             AsyncTask.execute {
-                Thread.sleep(1000)
+                Thread.sleep(500)
                 callback.onResult(messages)
             }
         }
@@ -52,25 +54,49 @@ class MainActivity : AppCompatActivity() {
         chatView.addMessage(MessageGenerator.generateMessage(false))
         chatView.addMessage(MessageGenerator.generateMessage(false))
 
-        button1.setOnClickListener {
-            chatView.addMessage(MessageGenerator.generateMessage(false))
+        message.setText(MessageGenerator.generateMessageText())
+
+        send.setOnClickListener {
+            if(message.text.toString().isEmpty())
+                message.setText(MessageGenerator.generateMessageText())
+            chatView.addMessage(MessageGenerator.generateMessage(false, message.text.toString()))
+            message.setText(MessageGenerator.generateMessageText())
         }
 
-        button2.setOnClickListener {
-            if (counter == 0)
-                setTheme1()
-            else {
-                setTheme2()
-                counter = 0
-            }
-        }
-
-        button2.setOnLongClickListener {
-            setRandomTheme()
-            true
+        sendContainer.setOnClickListener {
+            if(message.text.toString().isEmpty())
+                message.setText(MessageGenerator.generateMessageText())
+            chatView.addMessage(MessageGenerator.generateMessage(false, message.text.toString()))
+            message.setText(MessageGenerator.generateMessageText())
         }
 
         setTheme2()
+
+        setSupportActionBar(toolbar)
+        toolbar.setBackgroundColor(Color.parseColor("#FF061F3D"))
+        toolbar.setTitleTextColor(Color.parseColor("#FFFFFF"))
+
+        toolbar.setOnClickListener {
+            setRandomTheme()
+        }
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        if (counter == 0)
+            setTheme1()
+        else {
+            setTheme2()
+            counter = 0
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     fun setTheme1() {
@@ -232,5 +258,8 @@ class MainActivity : AppCompatActivity() {
             )
         )
         chatView.setIsReadColor(Color.argb(255, Random.nextInt(255), Random.nextInt(255), Random.nextInt(255)))
+
+
+        chatView.setSelectOnClick(true)
     }
 }

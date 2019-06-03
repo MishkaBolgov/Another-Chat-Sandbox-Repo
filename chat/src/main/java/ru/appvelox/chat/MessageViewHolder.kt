@@ -63,14 +63,15 @@ class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         } else {
             itemView.authorName.visibility = View.GONE
             itemView.message.visibility = View.GONE
-            itemView.time.visibility = View.GONE
             itemView.date.visibility = View.GONE
             itemView.replyContainer.visibility = View.GONE
-            itemView.isRead.visibility = View.GONE
 
             itemView.image.visibility = View.VISIBLE
             Picasso.get()
                 .load(message.getImageUrl())
+//                .transform(RoundedImage(20f))
+//                .fit()
+//                .centerInside()
                 .into(itemView.image)
 
         }

@@ -8,10 +8,6 @@ import ru.appvelox.chat.model.Message
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
 
-    fun tt(): String{
-        return "real"
-    }
-
     private val adapter = MessageAdapter(Appearance())
 
     fun setOnItemClickListener(listener: OnItemClickListener?) {
@@ -170,6 +166,10 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
     fun setReplyLineColor(color: Int) {
         adapter.appearance.replyLineColor = color
         adapter.notifyAppearanceChanged()
+    }
+
+    fun notifyDatasetChanged(){
+        adapter.notifyDataSetChanged()
     }
 
     interface LoadMoreCallback {

@@ -120,6 +120,66 @@ object MessageGenerator {
         }.also { messagesList.add(it) }
     }
 
+    fun generateMessage(oldMessages: Boolean, messageText: String): Message {
+        return object : Message {
+
+            private val mId = nextId
+            private val mUser = when (Random.nextInt(3)) {
+                0 -> user1
+                1 -> user2
+                2 -> user3
+                else -> user3
+            }
+            private val mMessageText = messageText
+            private val mDate = if (oldMessages) previousDate else nextDate
+            private val repliedOn = if (Random.nextInt(4) != 0)
+                null
+            else {
+                if (messagesList.isEmpty())
+                    null
+                else
+                    messagesList[Random.nextInt(messagesList.size)]
+            }
+
+            private val mIsRead = Random.nextBoolean()
+            private val mIsSent = !mIsRead
+
+            private val mImageUrl = /*if(Random.nextInt(10) < 5) "https://i.ytimg.com/vi/BfCwN4iy6T8/maxresdefault.jpg" else*/ null
+
+            override fun getId(): Long {
+                return mId
+            }
+
+            override fun getText(): String {
+                return mMessageText
+            }
+
+            override fun getAuthor(): Author {
+                return mUser
+            }
+
+            override fun getDate(): Date {
+                return mDate
+            }
+
+            override fun getRepliedMessage(): Message? {
+                return repliedOn
+            }
+
+            override fun isSent(): Boolean? {
+                return mIsSent
+            }
+
+            override fun isRead(): Boolean? {
+                return mIsRead
+            }
+
+            override fun getImageUrl(): String? {
+                return mImageUrl
+            }
+        }.also { messagesList.add(it) }
+    }
+
 
     fun generateMessageText(words: Int = 20): String {
         val wordNumber = wordsArray.size

@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
 
-internal class MessageAdapter(val appearance: IAppearance): RecyclerView.Adapter<MessageViewHolder>() {
+internal class MessageAdapter(val appearance: IAppearance) : RecyclerView.Adapter<MessageViewHolder>() {
 
     var onReplyClickListener: ChatView.OnReplyClickListener? = null
 
@@ -87,7 +87,7 @@ internal class MessageAdapter(val appearance: IAppearance): RecyclerView.Adapter
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
-        val view =  if(customMessageLayout == null)
+        val view = if (customMessageLayout == null)
             LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
         else
             LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
@@ -247,15 +247,13 @@ internal class MessageAdapter(val appearance: IAppearance): RecyclerView.Adapter
     }
 
     private fun View.applyOutgoingSelectedAppearance() {
-        appearance.getOutgoingSelectedMessageBackground().constantState?.let {
-            this.messageContainer.background = it.newDrawable().mutate()
-        }
+        applyCommonStyle()
+        this.messageContainer.background = appearance.getOutgoingSelectedMessageBackground()
     }
 
     private fun View.applyIncomingSelectedAppearance() {
-        appearance.getIncomingSelectedMessageBackground().constantState?.let {
-            this.messageContainer.background = it.newDrawable().mutate()
-        }
+        applyCommonStyle()
+        this.messageContainer.background = appearance.getIncomingSelectedMessageBackground()
     }
 
     fun requestPreviousMessagesFromListener() {
@@ -282,7 +280,7 @@ internal class MessageAdapter(val appearance: IAppearance): RecyclerView.Adapter
     }
 
     fun updateMessage(message: Message) {
-        val index = messageList.indexOf( messageList.find { it.getId() == message.getId() })
+        val index = messageList.indexOf(messageList.find { it.getId() == message.getId() })
         messageList[index] = message
         notifyItemChanged(index)
     }

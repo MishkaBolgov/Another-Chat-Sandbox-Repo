@@ -3,8 +3,10 @@ package ru.appvelox.chat
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Vibrator
+import android.util.Log
 import android.view.MotionEvent
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_IDLE
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
@@ -13,13 +15,14 @@ import kotlin.math.abs
 class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
     var itemTouchHelper: ItemTouchHelper? = null
-    private var blockSwipeDirection = true
-    private var actionOffset = 160
-    private var resetOffset = 80
-    private var actionIconAppearOffset = 80
+    var triggerOffset = 300f
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         return makeMovementFlags(0, ItemTouchHelper.LEFT)
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
     }
 
     override fun onMove(
@@ -30,21 +33,29 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
         return false
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-    }
-
     override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int {
-//        if (isItemDraggedToAction)
-//            return 0
+//        if(offsetReached)
+//            return ACTION_STATE_IDLE
 
-        if (blockSwipeDirection) {
-            blockSwipeDirection = false
-            isItemDraggedToAction = false
-            return 0
-        }
         return super.convertToAbsoluteDirection(flags, layoutDirection)
     }
+
+    override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
+        val threshold = super.getSwipeThreshold(viewHolder)
+        return threshold
+    }
+
+    override fun getSwipeVelocityThreshold(defaultValue: Float): Float {
+        val velocity = defaultValue
+        return super.getSwipeVelocityThreshold(velocity)
+    }
+
+    override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
+        val velocity = defaultValue
+        return  super.getSwipeEscapeVelocity(velocity)
+    }
+
+    var offsetReached = false
 
     override fun onChildDraw(
         c: Canvas,
@@ -55,27 +66,9 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        setTouchListener(recyclerView)
 
-        if(dX < -actionOffset && !isItemDraggedToAction) {
-            (recyclerView.context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(20)
-            isItemDraggedToAction = true
-//                itemTouchHelper?.attachToRecyclerView(null)
-        }
-
-        if (dX < -actionOffset) return
-
-        if(dX > -resetOffset)
-            isItemDraggedToAction = false
-
-        if(dX == 0f)
-            viewHolder.itemView.imageViewLeftSwipeActionIcon.imageAlpha = 0
-
-        if(dX < -actionIconAppearOffset) {
-            val progress = (dX + actionIconAppearOffset) / (actionOffset - actionIconAppearOffset)
-            val alpha = abs((255 * progress).toInt())
-            viewHolder.itemView.imageViewLeftSwipeActionIcon.imageAlpha = alpha
-        }
+//        if(dX < -triggerOffset)
+//            offsetReached = true
 
         getDefaultUIUtil().onDraw(
             c,
@@ -87,34 +80,6 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
             isCurrentlyActive
         )
     }
-
-    override fun onChildDrawOver(
-        c: Canvas,
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder?,
-        dX: Float,
-        dY: Float,
-        actionState: Int,
-        isCurrentlyActive: Boolean
-    ) {
-        viewHolder?.itemView?.contentContainer?.let {
-
-            if(isItemDraggedToAction)
-                return
-
-            getDefaultUIUtil().onDrawOver(
-                c,
-                recyclerView,
-                it,
-                dX,
-                dY,
-                actionState,
-                isCurrentlyActive
-            )
-        }
-    }
-
-
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         getDefaultUIUtil().clearView(viewHolder.itemView.contentContainer)
@@ -129,21 +94,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
     }
 
-    fun setTouchListener(recyclerView: RecyclerView) {
-        recyclerView.setOnTouchListener { v, event ->
-           blockSwipeDirection = event.action == MotionEvent.ACTION_CANCEL || event.action == MotionEvent.ACTION_UP
-            if(blockSwipeDirection){
-                onSwipeEnd()
-            }
-            false
-        }
+    enum class States{
+        REST, SWIPE, TRIGGERED
     }
-
-    fun onSwipeEnd(){
-        isItemDraggedToAction = false
-
-    }
-
-    var isItemDraggedToAction = false
-
 }

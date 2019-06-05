@@ -12,18 +12,14 @@ import ru.appvelox.chat.model.Message
 import java.text.SimpleDateFormat
 
 class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    companion object {
-        var counter = 0
-    }
+    var message: Message? = null
 
     init {
-        ++counter
-        view.imageViewLeftSwipeActionIcon?.let {
-            it.imageAlpha = 0
-        }
+        view.imageViewLeftSwipeActionIcon?.imageAlpha = 0
     }
 
     fun bind(message: Message, showMessageDate: Boolean = false) {
+        this.message = message
         itemView.authorName.text = message.getAuthor().getName()
         itemView.message.text = message.getText()
         itemView.time.text = SimpleDateFormat("HH:mm").format(message.getDate())

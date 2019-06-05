@@ -2,6 +2,7 @@ package ru.appvelox.chat
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import ru.appvelox.chat.model.Message
@@ -36,8 +37,13 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         })
         val swipeToReplyCallback = SwipeToReplyCallback()
         val itemTouchHelper = ItemTouchHelper(swipeToReplyCallback)
-        swipeToReplyCallback.itemTouchHelper = itemTouchHelper
         itemTouchHelper.attachToRecyclerView(this)
+        swipeToReplyCallback.listener = object: OnSwipeActionListener{
+            override fun onAction(message: Message) {
+                Toast.makeText(context, "Reply on message #${message.getId()}", Toast.LENGTH_SHORT).show()
+            }
+        }
+        swipeToReplyCallback.vibrationDuration = 5000
 
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ChatView)
 
@@ -178,6 +184,10 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
 
     interface OnItemClickListener {
         fun onClick(message: Message)
+    }
+
+    interface OnSwipeActionListener{
+        fun onAction(message: Message)
     }
 
     interface OnItemLongClickListener {

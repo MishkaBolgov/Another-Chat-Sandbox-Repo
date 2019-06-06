@@ -9,7 +9,7 @@ import ru.appvelox.chat.model.Message
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
 
-    private val adapter = MessageAdapter(Appearance())
+    private val adapter = MessageAdapter(Appearance(context))
 
     fun setOnItemClickListener(listener: OnItemClickListener?) {
         adapter.onItemClickListener = listener
@@ -43,7 +43,6 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
                 Toast.makeText(context, "Reply on message #${message.getId()}", Toast.LENGTH_SHORT).show()
             }
         }
-        swipeToReplyCallback.vibrationDuration = 5000
 
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ChatView)
 

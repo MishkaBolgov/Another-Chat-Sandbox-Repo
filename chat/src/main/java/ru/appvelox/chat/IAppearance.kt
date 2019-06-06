@@ -25,4 +25,5 @@ interface IAppearance {
     fun getIncomingMessageBackground(): Drawable?
     fun getOutgoingSelectedMessageBackground(): Drawable
     fun getIncomingSelectedMessageBackground(): Drawable
+    fun getSwipeActionIcon(): Drawable?
 }

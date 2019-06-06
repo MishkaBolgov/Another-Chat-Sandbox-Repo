@@ -21,7 +21,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
     private val MIN_ACTION_ICON_START_APPEARING_OFFSET = 0f
     private val DEFAULT_ACTION_ICON_START_APPEARING_OFFSET = 100f
 
-    private val MIN_VIBRATION_DURATION = 10L
+    private val MIN_VIBRATION_DURATION = 0L
     private val MAX_VIBRATION_DURATION = 500L
     private val DEFAULT_VIBRATION_DURATION = 10L
 

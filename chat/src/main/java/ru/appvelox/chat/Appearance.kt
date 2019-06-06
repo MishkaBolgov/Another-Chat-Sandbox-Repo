@@ -1,11 +1,13 @@
 package ru.appvelox.chat
 
+import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.StateListDrawable
 
-internal class Appearance: IAppearance {
+internal class Appearance(val context: Context): IAppearance {
     override var isReadColor =  Color.argb(255, 255, 255, 255)
     override var isSentColor = Color.argb(255, 255, 255, 255)
 
@@ -54,5 +56,9 @@ internal class Appearance: IAppearance {
         cornerRadii = floatArrayOf(radius, radius, 0f, 0f, radius, radius, radius, radius)
     }
 
+    var swipeActionIconResource = R.drawable.ic_reply_black_24dp
 
+    override fun getSwipeActionIcon(): Drawable? {
+        return context.resources.getDrawable(swipeActionIconResource)
+    }
 }

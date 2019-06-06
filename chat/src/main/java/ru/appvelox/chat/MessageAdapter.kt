@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_message.view.*
+import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
 import kotlinx.android.synthetic.main.reply.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
@@ -216,6 +217,9 @@ internal class MessageAdapter(val appearance: IAppearance) : RecyclerView.Adapte
 
         isRead.setColorFilter(appearance.isReadColor)
         isSent.setColorFilter(appearance.isSentColor)
+
+        imageViewLeftSwipeActionIcon.setImageDrawable(appearance.getSwipeActionIcon())
+
     }
 
     private fun View.applyIncomingConstraints() {

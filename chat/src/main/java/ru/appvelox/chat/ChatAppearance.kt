@@ -1,9 +1,8 @@
 package ru.appvelox.chat
 
 import android.graphics.drawable.Drawable
-import ru.appvelox.chat.model.Message
 
-interface IAppearance {
+interface ChatAppearance {
     var outgoingSelectedMessageBackgroundColor: Int
     var incomingSelectedMessageBackgroundColor: Int
     var outgoingMessageBackgroundColor: Int
@@ -21,9 +20,17 @@ interface IAppearance {
     var authorNameSize: Float
     var authorNameColor: Int
 
-    fun getOutgoingMessageBackground(): Drawable?
-    fun getIncomingMessageBackground(): Drawable?
-    fun getOutgoingSelectedMessageBackground(): Drawable
-    fun getIncomingSelectedMessageBackground(): Drawable
+    var isIncomingAvatarVisible: Boolean
+    var isOutgoingAvatarVisible: Boolean
+    var isIncomingAuthorNameVisible: Boolean
+    var isOutgoingAuthorNameVisible: Boolean
+    var isIncomingReplyAuthorNameVisible: Boolean
+    var isOutgoingReplyAuthorNameVisible: Boolean
+
+    fun getOutgoingMessageBackground(isInChain: Boolean = false): Drawable?
+    fun getIncomingMessageBackground(isInChain: Boolean = false): Drawable?
+    fun getOutgoingSelectedMessageBackground(isInChain: Boolean = false): Drawable
+    fun getIncomingSelectedMessageBackground(isInChain: Boolean = false): Drawable
     fun getSwipeActionIcon(): Drawable?
+
 }

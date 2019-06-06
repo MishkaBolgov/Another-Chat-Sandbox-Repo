@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                 messages.add(MessageGenerator.generateMessage(true))
             }
             AsyncTask.execute {
-                Thread.sleep(500)
+//                Thread.sleep(500)
                 callback.onResult(messages)
             }
         }
@@ -50,9 +50,9 @@ class MainActivity : AppCompatActivity() {
 
         chatView.setCurrentUserId(MessageGenerator.user1.getId())
 
-        chatView.addMessage(MessageGenerator.generateMessage(false))
-        chatView.addMessage(MessageGenerator.generateMessage(false))
-        chatView.addMessage(MessageGenerator.generateMessage(false))
+//        chatView.addMessage(MessageGenerator.generateMessage(false))
+//        chatView.addMessage(MessageGenerator.generateMessage(false))
+//        chatView.addMessage(MessageGenerator.generateMessage(false))
 
         message.setText(MessageGenerator.generateMessageText())
 
@@ -69,6 +69,15 @@ class MainActivity : AppCompatActivity() {
             chatView.addMessage(MessageGenerator.generateMessage(false, message.text.toString()))
             message.setText(MessageGenerator.generateMessageText())
         }
+
+
+        val initialMessages = mutableListOf<Message>()
+        for(counter in 0..50)
+            initialMessages.add(MessageGenerator.generateMessage(false, message.text.toString()))
+
+
+
+        chatView.addMessages(initialMessages)
 
         setTheme2()
 

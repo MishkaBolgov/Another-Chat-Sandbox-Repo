@@ -10,7 +10,7 @@ import org.junit.Test
 import ru.appvelox.chat.model.Message
 
 internal class AdapterTest {
-    var appearance = mockk<IAppearance>()
+    var appearance = mockk<ChatAppearance>()
     var adapter = spyk(MessageAdapter(appearance))
 
     @Before

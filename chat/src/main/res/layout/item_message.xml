@@ -60,12 +60,7 @@
 
             <FrameLayout
                     android:id="@+id/replyContainer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:visibility="gone"
+                    style="@style/ReplyContainer"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintTop_toBottomOf="@id/authorName"
                     app:layout_constraintStart_toStartOf="parent"

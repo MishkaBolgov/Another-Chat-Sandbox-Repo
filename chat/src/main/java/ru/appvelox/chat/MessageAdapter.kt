@@ -15,7 +15,7 @@ import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
 
-internal class MessageAdapter(val appearance: IAppearance) : RecyclerView.Adapter<MessageViewHolder>() {
+internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Adapter<MessageViewHolder>() {
 
     var onReplyClickListener: ChatView.OnReplyClickListener? = null
 
@@ -25,13 +25,13 @@ internal class MessageAdapter(val appearance: IAppearance) : RecyclerView.Adapte
 
     var oldDataLoading = false
 
-    var onItemClickListener: ChatView.OnItemClickListener? = null
+    var onItemClickListener: ChatView.OnMessageClickListener? = null
         set(value) {
             notifyDataSetChanged()
             field = value
         }
 
-    var onItemLongClickListener: ChatView.OnItemLongClickListener? = null
+    var onItemLongClickListener: ChatView.OnMessageLongClickListener? = null
         set(value) {
             notifyDataSetChanged()
             field = value
@@ -189,6 +189,9 @@ internal class MessageAdapter(val appearance: IAppearance) : RecyclerView.Adapte
         applyCommonStyle()
         applyOutgoingConstraints()
         isRead.visibility = View.VISIBLE
+        avatarContainer.visibility = if(appearance.isOutgoingAvatarVisible) View.VISIBLE else View.GONE
+        authorName.visibility = if(appearance.isOutgoingAuthorNameVisible) View.VISIBLE else View.GONE
+        replyAuthorName.visibility = if(appearance.isOutgoingAuthorNameVisible) View.VISIBLE else View.GONE
         this.messageContainer.background = appearance.getOutgoingMessageBackground()
     }
 
@@ -196,6 +199,9 @@ internal class MessageAdapter(val appearance: IAppearance) : RecyclerView.Adapte
         applyCommonStyle()
         applyIncomingConstraints()
         isRead.visibility = View.GONE
+        avatarContainer.visibility = if(appearance.isIncomingAvatarVisible) View.VISIBLE else View.GONE
+        authorName.visibility = if(appearance.isIncomingAuthorNameVisible) View.VISIBLE else View.GONE
+        replyAuthorName.visibility = if(appearance.isIncomingAuthorNameVisible) View.VISIBLE else View.GONE
         this.messageContainer.background = appearance.getIncomingMessageBackground()
     }
 
@@ -287,5 +293,10 @@ internal class MessageAdapter(val appearance: IAppearance) : RecyclerView.Adapte
         val index = messageList.indexOf(messageList.find { it.getId() == message.getId() })
         messageList[index] = message
         notifyItemChanged(index)
+    }
+
+    fun addMessages(messages: MutableList<Message>) {
+        messageList.addAll(messages)
+        notifyDataSetChanged()
     }
 }

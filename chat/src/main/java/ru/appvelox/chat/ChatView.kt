@@ -9,13 +9,13 @@ import ru.appvelox.chat.model.Message
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
 
-    private val adapter = MessageAdapter(Appearance(context))
+    private val adapter = MessageAdapter(DefaultAppearance(context))
 
-    fun setOnItemClickListener(listener: OnItemClickListener?) {
+    fun setOnItemClickListener(listener: OnMessageClickListener?) {
         adapter.onItemClickListener = listener
     }
 
-    fun setOnItemLongClickListener(listener: OnItemLongClickListener?) {
+    fun setOnItemLongClickListener(listener: OnMessageLongClickListener?) {
         adapter.onItemLongClickListener = listener
     }
 
@@ -55,7 +55,7 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
 
     fun setSelectOnClick(b: Boolean) {
         if (b)
-            adapter.onItemClickListener = object : OnItemClickListener {
+            adapter.onItemClickListener = object : OnMessageClickListener {
                 override fun onClick(message: Message) {
                     adapter.changeMessageSelection(message)
                 }
@@ -177,24 +177,29 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.notifyDataSetChanged()
     }
 
+    fun addMessages(messages: MutableList<Message>) {
+        adapter.addMessages(messages)
+    }
+
     interface LoadMoreCallback {
         fun onResult(messages: List<Message>)
     }
 
-    interface OnItemClickListener {
+    interface OnMessageClickListener {
         fun onClick(message: Message)
+    }
+
+    interface OnReplyClickListener {
+        fun onReplyClick(message: Message)
     }
 
     interface OnSwipeActionListener{
         fun onAction(message: Message)
-    }
 
-    interface OnItemLongClickListener {
+    }
+    interface OnMessageLongClickListener {
         fun onLongClick(message: Message)
-    }
 
-    internal interface OnReplyClickListener {
-        fun onReplyClick(message: Message)
     }
 
 }

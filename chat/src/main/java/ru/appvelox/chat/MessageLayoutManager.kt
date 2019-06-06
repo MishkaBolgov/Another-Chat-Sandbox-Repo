@@ -13,4 +13,8 @@ class MessageLayoutManager(context: Context): LinearLayoutManager(context){
     init {
         stackFromEnd = true
     }
+
+//    override fun getExtraLayoutSpace(state: RecyclerView.State?): Int {
+//        return 2
+//    }
 }

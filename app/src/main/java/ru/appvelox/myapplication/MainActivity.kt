@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         chatView.setCurrentUserId(MessageGenerator.user1.getId())
 
-//        chatView.addMessage(MessageGenerator.generateMessage(false))
+        chatView.addMessage(MessageGenerator.generateMessage(false))
 //        chatView.addMessage(MessageGenerator.generateMessage(false))
 //        chatView.addMessage(MessageGenerator.generateMessage(false))
 
@@ -71,13 +71,13 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val initialMessages = mutableListOf<Message>()
-        for(counter in 0..50)
-            initialMessages.add(MessageGenerator.generateMessage(false, message.text.toString()))
+//        val initialMessages = mutableListOf<Message>()
+//        for(counter in 0..50)
+//            initialMessages.add(MessageGenerator.generateMessage(false, message.text.toString()))
 
 
 
-        chatView.addMessages(initialMessages)
+//        chatView.addMessages(initialMessages)
 
         setTheme2()
 
@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity() {
         toolbar.setOnClickListener {
             setRandomTheme()
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -108,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun setTheme1() {
+    fun setTheme2() {
 
         val color1 = Color.parseColor("#FFF3F9FF")
         val color2 = Color.parseColor("#EFfffD")
@@ -157,10 +156,12 @@ class MainActivity : AppCompatActivity() {
         chatView.setIncomingSelectedMessageBackgroundColor(colorSelect)
         chatView.setOutgoingSelectedMessageBackgroundColor(colorSelect)
 
+        chatView.setMaxWidth(800)
+
         chatView.setSelectOnClick(true)
     }
 
-    fun setTheme2() {
+    fun setTheme1() {
 
         val color1 = Color.parseColor("#FCFFFC")
         val color2 = Color.parseColor("#EFFFF9")
@@ -206,6 +207,7 @@ class MainActivity : AppCompatActivity() {
         chatView.setIncomingSelectedMessageBackgroundColor(color1)
         chatView.setOutgoingSelectedMessageBackgroundColor(color1)
 
+        chatView.setMaxWidth(400)
 
         chatView.setSelectOnClick(false)
     }
@@ -268,6 +270,7 @@ class MainActivity : AppCompatActivity() {
         )
         chatView.setIsReadColor(Color.argb(255, Random.nextInt(255), Random.nextInt(255), Random.nextInt(255)))
 
+        chatView.setMaxWidth(Random.nextInt(1000))
 
         chatView.setSelectOnClick(true)
     }

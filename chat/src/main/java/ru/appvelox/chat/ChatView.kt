@@ -5,7 +5,9 @@ import android.util.AttributeSet
 import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import ru.appvelox.chat.model.Author
 import ru.appvelox.chat.model.Message
+import java.util.*
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
 
@@ -51,6 +53,7 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
                 navigateToMessage(message)
             }
         }
+
     }
 
     fun setSelectOnClick(b: Boolean) {
@@ -122,7 +125,7 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
     }
 
     fun setMessageTextSize(size: Float){
-        adapter.appearance.messageSize = size
+        adapter.appearance.messageTextSize = size
         adapter.notifyAppearanceChanged()
     }
 
@@ -173,6 +176,11 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.notifyAppearanceChanged()
     }
 
+    fun setMaxWidth(width: Int){
+        adapter.appearance.maxMessageWidth = width
+        adapter.notifyAppearanceChanged()
+    }
+
     fun notifyDatasetChanged(){
         adapter.notifyDataSetChanged()
     }
@@ -180,6 +188,7 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
     fun addMessages(messages: MutableList<Message>) {
         adapter.addMessages(messages)
     }
+
 
     interface LoadMoreCallback {
         fun onResult(messages: List<Message>)
@@ -197,9 +206,17 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         fun onAction(message: Message)
 
     }
+
     interface OnMessageLongClickListener {
         fun onLongClick(message: Message)
-
     }
 
+    interface OnAvatarClickListener {
+        fun onClick(author: Author)
+    }
+
+    interface DateFormatter{
+        fun formatDate(date: Date): String
+        fun formatTime(date: Date): String
+    }
 }

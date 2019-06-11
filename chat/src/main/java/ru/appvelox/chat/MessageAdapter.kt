@@ -9,8 +9,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_message.view.*
-import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
-import kotlinx.android.synthetic.main.reply.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
@@ -98,6 +96,7 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
             MessageType.OUTGOING.type -> view.applyOutgoingAppearance()
         }
 
+
         val viewHolder = MessageViewHolder(view)
 
         return viewHolder
@@ -106,6 +105,8 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
     override fun getItemCount() = messageList.size//if (currentUserId != null) messageList.size else 0
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
+
+        Slowmeter.from()
         val message = messageList[position]
 
         if (onItemClickListener == null) {
@@ -139,7 +140,7 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
         }
 
         if (position == 0) {
-            holder.bind(message, true)
+            holder.bind(message, true, appearance.getDateFormatter())
             return
         }
 
@@ -149,8 +150,7 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
         val daysBetweenMessages = Days.daysBetween(messageDate, previousMessageDate).days
         val showMessageDate = daysBetweenMessages != 0
 
-        holder.bind(message, showMessageDate)
-
+        holder.bind(message, showMessageDate, appearance.getDateFormatter())
 
         if (selectedMessageList.contains(message))
             if (message.isIncoming())
@@ -163,7 +163,7 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
             else
                 holder.itemView.applyOutgoingAppearance()
 
-
+        Slowmeter.to()
     }
 
     fun getLastMessageIndex(): Int {
@@ -206,12 +206,18 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
     }
 
     private fun View.applyCommonStyle() {
+
+        date.setTextColor(appearance.dateTextColor)
+        date.textSize = appearance.dateTextSize
+
         authorName.setTextColor(appearance.authorNameColor)
         authorName.textSize = appearance.authorNameSize
 
         message.setTextColor(appearance.messageColor)
-        message.textSize = appearance.messageSize
+        message.textSize = appearance.messageTextSize
 
+        time.setTextColor(appearance.timeTextColor)
+        time.textSize = appearance.timeTextSize
 
         replyAuthorName.setTextColor(appearance.replyAuthorNameColor)
         replyAuthorName.textSize = appearance.replyAuthorNameSize
@@ -225,6 +231,8 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
         isSent.setColorFilter(appearance.isSentColor)
 
         imageViewLeftSwipeActionIcon.setImageDrawable(appearance.getSwipeActionIcon())
+
+        messageContainer.maxWidth = appearance.maxMessageWidth
 
     }
 

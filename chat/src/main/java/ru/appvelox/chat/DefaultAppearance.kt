@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 internal class DefaultAppearance(val context: Context) : ChatAppearance {
     override var isReadColor = Color.argb(255, 255, 255, 255)
@@ -26,12 +29,22 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
     override var authorNameColor = Color.GRAY
     override var messageColor = Color.BLUE
     override var authorNameSize: Float = 16f
-    override var messageSize: Float = 15f
+    override var messageTextSize: Float = 15f
+
+
+    override var dateTextSize: Float = 14f
+    override var timeTextSize: Float = 12f
+    override var dateTextColor: Int = Color.GRAY
+    override var timeTextColor: Int = Color.GRAY
+
+
+
+    override var maxMessageWidth: Int = 500
 
     override var isIncomingAvatarVisible = false
     override var isOutgoingAvatarVisible = false
     override var isIncomingAuthorNameVisible = true
-    override var isOutgoingAuthorNameVisible = false
+    override var isOutgoingAuthorNameVisible = true
     override var isIncomingReplyAuthorNameVisible = false
     override var isOutgoingReplyAuthorNameVisible = true
 
@@ -74,8 +87,33 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
     }
 
     var swipeActionIconResource = R.drawable.ic_reply_black_24dp
+    var readIcon = R.drawable.ic_done_all_black_24dp
 
     override fun getSwipeActionIcon(): Drawable? {
         return context.resources.getDrawable(swipeActionIconResource)
     }
+
+    override fun getReadIndicatorIcon(): Drawable? {
+        return context.resources.getDrawable(readIcon)
+    }
+
+    var mDateFormatter: ChatView.DateFormatter? = null
+    private val defaultDateFormatter = object : ChatView.DateFormatter {
+        override fun formatDate(date: Date): String {
+            return SimpleDateFormat("dd MMMM").format(date)
+        }
+
+        override fun formatTime(date: Date): String {
+            return SimpleDateFormat("HH:mm").format(date)
+        }
+    }
+
+    override fun getDateFormatter(): ChatView.DateFormatter {
+
+        mDateFormatter?.let {
+            return it
+        }
+        return defaultDateFormatter
+    }
+
 }

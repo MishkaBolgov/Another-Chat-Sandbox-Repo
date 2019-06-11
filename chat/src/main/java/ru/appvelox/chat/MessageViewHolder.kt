@@ -1,5 +1,6 @@
 package ru.appvelox.chat
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -7,23 +8,26 @@ import kotlinx.android.synthetic.main.avatar.view.*
 import kotlinx.android.synthetic.main.date.view.*
 import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
-import kotlinx.android.synthetic.main.reply.view.*
 import ru.appvelox.chat.model.Message
 import java.text.SimpleDateFormat
 
 class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     var message: Message? = null
 
+
+    companion object {
+        var counter = 0
+    }
     init {
         view.imageViewLeftSwipeActionIcon?.imageAlpha = 0
     }
 
-    fun bind(message: Message, showMessageDate: Boolean = false) {
+    fun bind(message: Message, showMessageDate: Boolean = false, dateFormatter: ChatView.DateFormatter ) {
         this.message = message
         itemView.authorName.text = message.getAuthor().getName()
         itemView.message.text = message.getText()
-        itemView.time.text = SimpleDateFormat("HH:mm").format(message.getDate())
-        itemView.date.text = SimpleDateFormat("dd MMM").format(message.getDate())
+        itemView.time.text = dateFormatter.formatTime(message.getDate())
+        itemView.date.text = dateFormatter.formatDate(message.getDate())
 
         itemView.avatar?.let {
             Picasso.get()
@@ -63,12 +67,12 @@ class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             itemView.replyContainer.visibility = View.GONE
 
             itemView.image.visibility = View.VISIBLE
-            Picasso.get()
-                .load(message.getImageUrl())
+//            Picasso.get()
+//                .load(message.getImageUrl())
 //                .transform(RoundedImage(20f))
 //                .fit()
 //                .centerInside()
-                .into(itemView.image)
+//                .into(itemView.image)
 
         }
 

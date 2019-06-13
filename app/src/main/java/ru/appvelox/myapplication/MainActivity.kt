@@ -4,19 +4,11 @@ import android.graphics.Color
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Adapter
-import android.widget.Toast
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.appvelox.chat.*
-import ru.appvelox.chat.model.Author
 import ru.appvelox.chat.model.Message
-import java.util.*
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -88,6 +80,8 @@ class MainActivity : AppCompatActivity() {
         toolbar.setOnClickListener {
             setRandomTheme()
         }
+
+        chatView.setLayout(R.layout.item_custom_incoming_message, R.layout.item_custom_outgoing_message)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

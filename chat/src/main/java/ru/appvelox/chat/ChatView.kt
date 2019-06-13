@@ -11,7 +11,7 @@ import java.util.*
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
 
-    private val adapter = MessageAdapter(DefaultAppearance(context))
+    private var adapter: MessageAdapter = DefaultMessageAdapter(DefaultAppearance(context))
 
     fun setOnItemClickListener(listener: OnMessageClickListener?) {
         adapter.onItemClickListener = listener
@@ -40,7 +40,7 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         val swipeToReplyCallback = SwipeToReplyCallback()
         val itemTouchHelper = ItemTouchHelper(swipeToReplyCallback)
         itemTouchHelper.attachToRecyclerView(this)
-        swipeToReplyCallback.listener = object: OnSwipeActionListener{
+        swipeToReplyCallback.listener = object : OnSwipeActionListener {
             override fun onAction(message: Message) {
                 Toast.makeText(context, "Reply on message #${message.getId()}", Toast.LENGTH_SHORT).show()
             }
@@ -48,12 +48,11 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
 
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ChatView)
 
-        adapter.onReplyClickListener = object: OnReplyClickListener{
+        adapter.onReplyClickListener = object : OnReplyClickListener {
             override fun onReplyClick(message: Message) {
                 navigateToMessage(message)
             }
         }
-
     }
 
     fun setSelectOnClick(b: Boolean) {
@@ -91,11 +90,11 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.addOldMessages(messages)
     }
 
-    fun deleteMessage(message: Message){
+    fun deleteMessage(message: Message) {
         adapter.deleteMessage(message)
     }
 
-    fun updateMessage(message: Message){
+    fun updateMessage(message: Message) {
         adapter.updateMessage(message)
     }
 
@@ -124,49 +123,52 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.notifyAppearanceChanged()
     }
 
-    fun setMessageTextSize(size: Float){
+    fun setMessageTextSize(size: Float) {
         adapter.appearance.messageTextSize = size
         adapter.notifyAppearanceChanged()
     }
 
-    fun setAuthorTextSize(size: Float){
+    fun setAuthorTextSize(size: Float) {
         adapter.appearance.authorNameSize = size
         adapter.notifyAppearanceChanged()
     }
 
-    fun setReplyMessageTextSize(size: Float){
+    fun setReplyMessageTextSize(size: Float) {
         adapter.appearance.replyMessageSize = size
         adapter.notifyAppearanceChanged()
     }
 
-    fun setReplyAuthorTextSize(size: Float){
+    fun setReplyAuthorTextSize(size: Float) {
         adapter.appearance.replyAuthorNameSize = size
         adapter.notifyAppearanceChanged()
     }
 
-   fun setAuthorTextColor(color: Int){
-       adapter.appearance.authorNameColor = color
-       adapter.notifyAppearanceChanged()
-   }
-   fun setMessageTextColor(color: Int){
-       adapter.appearance.messageColor = color
-       adapter.notifyAppearanceChanged()
-   }
-   fun setReplyAuthorTextColor(color: Int){
-       adapter.appearance.replyAuthorNameColor = color
-       adapter.notifyAppearanceChanged()
-   }
-   fun setReplyMessageTextColor(color: Int){
-       adapter.appearance.replyMessageColor = color
-       adapter.notifyAppearanceChanged()
-   }
+    fun setAuthorTextColor(color: Int) {
+        adapter.appearance.authorNameColor = color
+        adapter.notifyAppearanceChanged()
+    }
 
-    fun setIsReadColor(color: Int){
+    fun setMessageTextColor(color: Int) {
+        adapter.appearance.messageColor = color
+        adapter.notifyAppearanceChanged()
+    }
+
+    fun setReplyAuthorTextColor(color: Int) {
+        adapter.appearance.replyAuthorNameColor = color
+        adapter.notifyAppearanceChanged()
+    }
+
+    fun setReplyMessageTextColor(color: Int) {
+        adapter.appearance.replyMessageColor = color
+        adapter.notifyAppearanceChanged()
+    }
+
+    fun setIsReadColor(color: Int) {
         adapter.appearance.isReadColor = color
         adapter.notifyAppearanceChanged()
     }
 
-    fun setIsSentColor(color: Int){
+    fun setIsSentColor(color: Int) {
         adapter.appearance.isSentColor = color
         adapter.notifyAppearanceChanged()
     }
@@ -176,12 +178,12 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.notifyAppearanceChanged()
     }
 
-    fun setMaxWidth(width: Int){
+    fun setMaxWidth(width: Int) {
         adapter.appearance.maxMessageWidth = width
         adapter.notifyAppearanceChanged()
     }
 
-    fun notifyDatasetChanged(){
+    fun notifyDatasetChanged() {
         adapter.notifyDataSetChanged()
     }
 
@@ -189,6 +191,22 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.addMessages(messages)
     }
 
+    fun setLayout(incomingMessageLayout: Int?, outgoingMessageLayout: Int?) {
+        val currentAppearance = adapter.appearance
+        val oldAdapter = adapter
+
+        if (incomingMessageLayout == null || outgoingMessageLayout == null)
+            adapter = DefaultMessageAdapter(currentAppearance)
+        else
+            adapter = MessageAdapter(currentAppearance)
+
+        oldAdapter.copyPropertiesTo(adapter)
+
+        setAdapter(adapter)
+
+        (adapter.appearance as DefaultAppearance).setMessageLayout(incomingMessageLayout, outgoingMessageLayout)
+        adapter.notifyAppearanceChanged()
+    }
 
     interface LoadMoreCallback {
         fun onResult(messages: List<Message>)
@@ -202,9 +220,8 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         fun onReplyClick(message: Message)
     }
 
-    interface OnSwipeActionListener{
+    interface OnSwipeActionListener {
         fun onAction(message: Message)
-
     }
 
     interface OnMessageLongClickListener {
@@ -215,7 +232,7 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         fun onClick(author: Author)
     }
 
-    interface DateFormatter{
+    interface DateFormatter {
         fun formatDate(date: Date): String
         fun formatTime(date: Date): String
     }

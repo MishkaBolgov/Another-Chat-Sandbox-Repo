@@ -39,6 +39,9 @@ interface ChatAppearance {
     var isSwipeActionIconVisible: Boolean
     var isReadIconVisible: Boolean
 
+    var incomingMessageLayout: Int
+    var outgoingMessageLayout: Int
+
     fun getOutgoingMessageBackground(isInChain: Boolean = false): Drawable?
     fun getIncomingMessageBackground(isInChain: Boolean = false): Drawable?
     fun getOutgoingSelectedMessageBackground(isInChain: Boolean = false): Drawable

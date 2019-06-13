@@ -2,6 +2,7 @@ package ru.appvelox.chat
 
 import android.os.Handler
 import android.os.Looper
+import android.provider.Telephony
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,7 @@ import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
 
-internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Adapter<MessageViewHolder>() {
+open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Message>? = null) : RecyclerView.Adapter<MessageViewHolder>() {
 
     var onReplyClickListener: ChatView.OnReplyClickListener? = null
 
@@ -35,10 +36,27 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
             field = value
         }
 
-    var customMessageLayout: Int? = null
+    internal val messageList = mutableListOf<Message>().apply {
+        if(initMessages!=null)
+            addAll(initMessages)
+    }
 
-    internal val messageList = mutableListOf<Message>()
     internal val selectedMessageList = mutableListOf<Message>()
+
+    fun copyPropertiesTo(adapter: MessageAdapter){
+        adapter.onReplyClickListener = onReplyClickListener
+        adapter.loadMoreListener = loadMoreListener
+        adapter.currentUserId = currentUserId
+        adapter.oldDataLoading = oldDataLoading
+        adapter.onItemClickListener = onItemClickListener
+        adapter.onItemLongClickListener = onItemLongClickListener
+
+        adapter.messageList.clear()
+        adapter.messageList.addAll(messageList)
+
+        adapter.selectedMessageList.clear()
+        adapter.selectedMessageList.addAll(selectedMessageList)
+    }
 
     fun addNewMessage(message: Message) {
         messageList.add(message)
@@ -83,19 +101,15 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
         messages.forEach { notifyItemChanged(messageList.indexOf(it)) }
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
-        val view = if (customMessageLayout == null)
-            LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
-        else
-            LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
-
-        when (viewType) {
-            MessageType.INCOMING.type -> view.applyIncomingAppearance()
-            MessageType.OUTGOING.type -> view.applyOutgoingAppearance()
+        var layout = when (viewType) {
+            MessageType.INCOMING.type -> appearance.incomingMessageLayout
+            MessageType.OUTGOING.type -> appearance.outgoingMessageLayout
+            else -> appearance.outgoingMessageLayout
         }
 
+        val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
 
         val viewHolder = MessageViewHolder(view)
 
@@ -106,34 +120,35 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
 
-        Slowmeter.from()
         val message = messageList[position]
 
+        val view = holder.itemView
+
         if (onItemClickListener == null) {
-            holder.itemView.messageContainer.setOnClickListener(null)
+            view.findViewById<ViewGroup>(R.id.messageContainer).setOnClickListener(null)
         } else {
-            holder.itemView.messageContainer.setOnClickListener {
+            view.findViewById<ViewGroup>(R.id.messageContainer).setOnClickListener {
                 onItemClickListener?.onClick(message)
             }
         }
 
         if (onItemLongClickListener == null) {
-            holder.itemView.messageContainer.setOnLongClickListener(null)
+            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener(null)
         } else {
-            holder.itemView.messageContainer.setOnLongClickListener {
+            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener {
                 onItemLongClickListener?.onLongClick(message)
                 true
             }
         }
 
-        holder.itemView.replyContainer.setOnClickListener {
+        view.findViewById<ViewGroup>(R.id.replyContainer).setOnClickListener {
             message.getRepliedMessage()?.let {
                 onReplyClickListener?.onReplyClick(it)
             }
         }
 
         onItemLongClickListener?.let { listener ->
-            holder.itemView.messageContainer.setOnLongClickListener {
+            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener {
                 listener.onLongClick(message)
                 true
             }
@@ -152,18 +167,7 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
 
         holder.bind(message, showMessageDate, appearance.getDateFormatter())
 
-        if (selectedMessageList.contains(message))
-            if (message.isIncoming())
-                holder.itemView.applyIncomingSelectedAppearance()
-            else
-                holder.itemView.applyOutgoingSelectedAppearance()
-        else
-            if (message.isIncoming())
-                holder.itemView.applyIncomingAppearance()
-            else
-                holder.itemView.applyOutgoingAppearance()
 
-        Slowmeter.to()
     }
 
     fun getLastMessageIndex(): Int {
@@ -176,102 +180,13 @@ internal class MessageAdapter(val appearance: ChatAppearance) : RecyclerView.Ada
         else
             MessageType.OUTGOING.type
 
-    private fun Message.isIncoming(): Boolean {
+    protected fun Message.isIncoming(): Boolean {
         val messageAuthorId = getAuthor().getId()
         return messageAuthorId != currentUserId
     }
 
     enum class MessageType(val type: Int) {
         INCOMING(0), OUTGOING(1)
-    }
-
-    private fun View.applyOutgoingAppearance() {
-        applyCommonStyle()
-        applyOutgoingConstraints()
-        isRead.visibility = View.VISIBLE
-        avatarContainer.visibility = if(appearance.isOutgoingAvatarVisible) View.VISIBLE else View.GONE
-        authorName.visibility = if(appearance.isOutgoingAuthorNameVisible) View.VISIBLE else View.GONE
-        replyAuthorName.visibility = if(appearance.isOutgoingAuthorNameVisible) View.VISIBLE else View.GONE
-        this.messageContainer.background = appearance.getOutgoingMessageBackground()
-    }
-
-    private fun View.applyIncomingAppearance() {
-        applyCommonStyle()
-        applyIncomingConstraints()
-        isRead.visibility = View.GONE
-        avatarContainer.visibility = if(appearance.isIncomingAvatarVisible) View.VISIBLE else View.GONE
-        authorName.visibility = if(appearance.isIncomingAuthorNameVisible) View.VISIBLE else View.GONE
-        replyAuthorName.visibility = if(appearance.isIncomingAuthorNameVisible) View.VISIBLE else View.GONE
-        this.messageContainer.background = appearance.getIncomingMessageBackground()
-    }
-
-    private fun View.applyCommonStyle() {
-
-        date.setTextColor(appearance.dateTextColor)
-        date.textSize = appearance.dateTextSize
-
-        authorName.setTextColor(appearance.authorNameColor)
-        authorName.textSize = appearance.authorNameSize
-
-        message.setTextColor(appearance.messageColor)
-        message.textSize = appearance.messageTextSize
-
-        time.setTextColor(appearance.timeTextColor)
-        time.textSize = appearance.timeTextSize
-
-        replyAuthorName.setTextColor(appearance.replyAuthorNameColor)
-        replyAuthorName.textSize = appearance.replyAuthorNameSize
-
-        replyMessage.setTextColor(appearance.replyMessageColor)
-        replyMessage.textSize = appearance.replyMessageSize
-
-        replyLine.setBackgroundColor(appearance.replyLineColor)
-
-        isRead.setColorFilter(appearance.isReadColor)
-        isSent.setColorFilter(appearance.isSentColor)
-
-        imageViewLeftSwipeActionIcon.setImageDrawable(appearance.getSwipeActionIcon())
-
-        messageContainer.maxWidth = appearance.maxMessageWidth
-
-    }
-
-    private fun View.applyIncomingConstraints() {
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(contentContainer as ConstraintLayout)
-        constraintSet.setHorizontalBias(avatarContainer.id, 0f)
-        constraintSet.setHorizontalBias(messageContainer.id, 0f)
-        constraintSet.connect(messageContainer.id, ConstraintSet.START, avatarContainer.id, ConstraintSet.END)
-        constraintSet.applyTo(contentContainer)
-
-        val constraintSet2 = ConstraintSet()
-        constraintSet2.clone(messageContainer as ConstraintLayout)
-        constraintSet2.setHorizontalBias(authorName.id, 0f)
-        constraintSet2.applyTo(messageContainer)
-    }
-
-    private fun View.applyOutgoingConstraints() {
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(contentContainer as ConstraintLayout)
-        constraintSet.setHorizontalBias(avatarContainer.id, 1f)
-        constraintSet.setHorizontalBias(messageContainer.id, 1f)
-        constraintSet.connect(messageContainer.id, ConstraintSet.END, avatarContainer.id, ConstraintSet.START)
-        constraintSet.applyTo(contentContainer)
-
-        val constraintSet2 = ConstraintSet()
-        constraintSet2.clone(messageContainer as ConstraintLayout)
-        constraintSet2.setHorizontalBias(authorName.id, 1f)
-        constraintSet2.applyTo(messageContainer)
-    }
-
-    private fun View.applyOutgoingSelectedAppearance() {
-        applyCommonStyle()
-        this.messageContainer.background = appearance.getOutgoingSelectedMessageBackground()
-    }
-
-    private fun View.applyIncomingSelectedAppearance() {
-        applyCommonStyle()
-        this.messageContainer.background = appearance.getIncomingSelectedMessageBackground()
     }
 
     fun requestPreviousMessagesFromListener() {

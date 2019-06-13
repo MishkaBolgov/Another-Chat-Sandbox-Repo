@@ -37,8 +37,6 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
     override var dateTextColor: Int = Color.GRAY
     override var timeTextColor: Int = Color.GRAY
 
-
-
     override var maxMessageWidth: Int = 500
 
     override var isIncomingAvatarVisible = false
@@ -47,6 +45,28 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
     override var isOutgoingAuthorNameVisible = true
     override var isIncomingReplyAuthorNameVisible = false
     override var isOutgoingReplyAuthorNameVisible = true
+    override var isSwipeActionIconVisible = true
+    override var isReadIconVisible = true
+
+
+    val defaultMessageLayout = R.layout.item_message
+
+    override var incomingMessageLayout: Int = defaultMessageLayout
+    override var outgoingMessageLayout: Int = defaultMessageLayout
+
+    fun setMessageLayout(incomingMessageLayout: Int?, outgoingMessageLayout: Int?) {
+        if (incomingMessageLayout == null) {
+            this.incomingMessageLayout = defaultMessageLayout
+        } else {
+            this.incomingMessageLayout = incomingMessageLayout
+        }
+
+        if (outgoingMessageLayout == null) {
+            this.outgoingMessageLayout = defaultMessageLayout
+        } else {
+            this.outgoingMessageLayout = outgoingMessageLayout
+        }
+    }
 
     override fun getIncomingMessageBackground(isInChain: Boolean) = GradientDrawable().apply {
         setColor(incomingMessageBackgroundColor)

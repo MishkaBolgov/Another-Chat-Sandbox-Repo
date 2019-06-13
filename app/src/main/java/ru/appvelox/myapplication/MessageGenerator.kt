@@ -84,7 +84,7 @@ object MessageGenerator {
             private val mIsRead = Random.nextBoolean()
             private val mIsSent = !mIsRead
 
-            private val mImageUrl = /*if(Random.nextInt(10) < 5) "https://i.ytimg.com/vi/BfCwN4iy6T8/maxresdefault.jpg" else*/ null
+            private val mImageUrl = if(Random.nextInt(10) < 5) "https://i.ytimg.com/vi/BfCwN4iy6T8/maxresdefault.jpg" else null
 
             override fun getId(): Long {
                 return mId

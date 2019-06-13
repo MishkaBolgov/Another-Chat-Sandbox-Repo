@@ -50,9 +50,12 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
 
 
     val defaultMessageLayout = R.layout.item_message
+    val defaultImageLayout = R.layout.item_image_message
 
     override var incomingMessageLayout: Int = defaultMessageLayout
     override var outgoingMessageLayout: Int = defaultMessageLayout
+    override var incomingImageLayout: Int = defaultImageLayout
+    override var outgoingImageLayout: Int = defaultImageLayout
 
     fun setMessageLayout(incomingMessageLayout: Int?, outgoingMessageLayout: Int?) {
         if (incomingMessageLayout == null) {

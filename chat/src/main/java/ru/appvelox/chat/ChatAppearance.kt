@@ -41,6 +41,8 @@ interface ChatAppearance {
 
     var incomingMessageLayout: Int
     var outgoingMessageLayout: Int
+    var incomingImageLayout: Int
+    var outgoingImageLayout: Int
 
     fun getOutgoingMessageBackground(isInChain: Boolean = false): Drawable?
     fun getIncomingMessageBackground(isInChain: Boolean = false): Drawable?

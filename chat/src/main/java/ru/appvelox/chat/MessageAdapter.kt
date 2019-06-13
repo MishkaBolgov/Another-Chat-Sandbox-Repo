@@ -14,7 +14,8 @@ import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
 
-open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Message>? = null) : RecyclerView.Adapter<MessageViewHolder>() {
+open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Message>? = null) :
+    RecyclerView.Adapter<MessageViewHolder>() {
 
     var onReplyClickListener: ChatView.OnReplyClickListener? = null
 
@@ -37,13 +38,13 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         }
 
     internal val messageList = mutableListOf<Message>().apply {
-        if(initMessages!=null)
+        if (initMessages != null)
             addAll(initMessages)
     }
 
     internal val selectedMessageList = mutableListOf<Message>()
 
-    fun copyPropertiesTo(adapter: MessageAdapter){
+    fun copyPropertiesTo(adapter: MessageAdapter) {
         adapter.onReplyClickListener = onReplyClickListener
         adapter.loadMoreListener = loadMoreListener
         adapter.currentUserId = currentUserId
@@ -106,17 +107,23 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         var layout = when (viewType) {
             MessageType.INCOMING.type -> appearance.incomingMessageLayout
             MessageType.OUTGOING.type -> appearance.outgoingMessageLayout
+            MessageType.INCOMING_IMAGE.type -> appearance.incomingImageLayout
+            MessageType.OUTGOING_IMAGE.type -> appearance.outgoingImageLayout
             else -> appearance.outgoingMessageLayout
         }
 
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
 
-        val viewHolder = MessageViewHolder(view)
+        val viewHolder = when (viewType) {
+            MessageType.INCOMING.type, MessageType.OUTGOING.type -> MessageViewHolder(view)
+            MessageType.INCOMING_IMAGE.type, MessageType.OUTGOING_IMAGE.type -> ImageViewHolder(view)
+            else -> MessageViewHolder(view)
+        }
 
         return viewHolder
     }
 
-    override fun getItemCount() = messageList.size//if (currentUserId != null) messageList.size else 0
+    override fun getItemCount() = messageList.size
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
 
@@ -124,35 +131,35 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
 
         val view = holder.itemView
 
-        if (onItemClickListener == null) {
-            view.findViewById<ViewGroup>(R.id.messageContainer).setOnClickListener(null)
-        } else {
-            view.findViewById<ViewGroup>(R.id.messageContainer).setOnClickListener {
-                onItemClickListener?.onClick(message)
-            }
-        }
-
-        if (onItemLongClickListener == null) {
-            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener(null)
-        } else {
-            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener {
-                onItemLongClickListener?.onLongClick(message)
-                true
-            }
-        }
-
-        view.findViewById<ViewGroup>(R.id.replyContainer).setOnClickListener {
-            message.getRepliedMessage()?.let {
-                onReplyClickListener?.onReplyClick(it)
-            }
-        }
-
-        onItemLongClickListener?.let { listener ->
-            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener {
-                listener.onLongClick(message)
-                true
-            }
-        }
+//        if (onItemClickListener == null) {
+//            view.findViewById<ViewGroup>(R.id.messageContainer).setOnClickListener(null)
+//        } else {
+//            view.findViewById<ViewGroup>(R.id.messageContainer).setOnClickListener {
+//                onItemClickListener?.onClick(message)
+//            }
+//        }
+//
+//        if (onItemLongClickListener == null) {
+//            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener(null)
+//        } else {
+//            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener {
+//                onItemLongClickListener?.onLongClick(message)
+//                true
+//            }
+//        }
+//
+//        view.findViewById<ViewGroup>(R.id.replyContainer).setOnClickListener {
+//            message.getRepliedMessage()?.let {
+//                onReplyClickListener?.onReplyClick(it)
+//            }
+//        }
+//
+//        onItemLongClickListener?.let { listener ->
+//            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener {
+//                listener.onLongClick(message)
+//                true
+//            }
+//        }
 
         if (position == 0) {
             holder.bind(message, true, appearance.getDateFormatter())
@@ -174,11 +181,19 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         return messageList.lastIndex
     }
 
-    override fun getItemViewType(position: Int) =
-        if (messageList[position].isIncoming())
-            MessageType.INCOMING.type
-        else
-            MessageType.OUTGOING.type
+    override fun getItemViewType(position: Int): Int {
+        val message = messageList[position]
+        return if (message.isIncoming()) {
+            if (message.getImageUrl() == null)
+                MessageType.INCOMING.type
+            else MessageType.INCOMING_IMAGE.type
+        } else {
+            if (message.getImageUrl() == null)
+                MessageType.OUTGOING.type
+            else
+                MessageType.OUTGOING_IMAGE.type
+        }
+    }
 
     protected fun Message.isIncoming(): Boolean {
         val messageAuthorId = getAuthor().getId()
@@ -186,7 +201,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
     }
 
     enum class MessageType(val type: Int) {
-        INCOMING(0), OUTGOING(1)
+        INCOMING(0), OUTGOING(1), INCOMING_IMAGE(2), OUTGOING_IMAGE(3)
     }
 
     fun requestPreviousMessagesFromListener() {

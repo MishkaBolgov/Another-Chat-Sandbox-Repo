@@ -15,13 +15,6 @@ import android.graphics.BitmapShader
 import android.opengl.ETC1.getHeight
 import android.opengl.ETC1.getWidth
 
-
-
-
-
-
-
-
 class CircularAvatar: Transformation {
     override fun transform(source: Bitmap): Bitmap {
         val size = Math.min(source.width, source.height)
@@ -56,6 +49,10 @@ class CircularAvatar: Transformation {
         return "circle"
     }
 }
+
+
+
+
 
 class RoundedImage(val radius: Float): Transformation {
     override fun transform(source: Bitmap): Bitmap {

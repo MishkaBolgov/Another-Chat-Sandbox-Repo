@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
 import ru.appvelox.chat.model.Message
 import java.text.SimpleDateFormat
 
-class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+open class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     var message: Message? = null
 
 
@@ -22,7 +22,7 @@ class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         view.imageViewLeftSwipeActionIcon?.imageAlpha = 0
     }
 
-    fun bind(message: Message, showMessageDate: Boolean = false, dateFormatter: ChatView.DateFormatter ) {
+    open fun bind(message: Message, showMessageDate: Boolean = false, dateFormatter: ChatView.DateFormatter ) {
         this.message = message
         itemView.authorName.text = message.getAuthor().getName()
         itemView.message.text = message.getText()

@@ -22,7 +22,7 @@ open class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         view.imageViewLeftSwipeActionIcon?.imageAlpha = 0
     }
 
-    open fun bind(message: Message, showMessageDate: Boolean = false, dateFormatter: ChatView.DateFormatter ) {
+    open fun bind(message: Message, showMessageDate: Boolean = false, dateFormatter: ChatView.DateFormatter, messageType: MessageType) {
         this.message = message
         itemView.authorName.text = message.getAuthor().getName()
         itemView.message.text = message.getText()
@@ -53,28 +53,6 @@ open class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             }
         }
 
-        if(message.getImageUrl() == null){
-            itemView.authorName.visibility = View.VISIBLE
-            itemView.message.visibility = View.VISIBLE
-            itemView.time.visibility = View.VISIBLE
-            itemView.date.visibility = View.VISIBLE
-
-            itemView.image.visibility = View.GONE
-        } else {
-            itemView.authorName.visibility = View.GONE
-            itemView.message.visibility = View.GONE
-            itemView.date.visibility = View.GONE
-            itemView.replyContainer.visibility = View.GONE
-
-            itemView.image.visibility = View.VISIBLE
-//            Picasso.get()
-//                .load(message.getImageUrl())
-//                .transform(RoundedImage(20f))
-//                .fit()
-//                .centerInside()
-//                .into(itemView.image)
-
-        }
 
 //        val isRead = message.isRead()
 //

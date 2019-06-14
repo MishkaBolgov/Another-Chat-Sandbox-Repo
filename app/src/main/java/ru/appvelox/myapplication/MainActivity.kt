@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
             setRandomTheme()
         }
 
-        chatView.setLayout(R.layout.item_custom_incoming_message, R.layout.item_custom_outgoing_message)
+//        chatView.setLayout(R.layout.item_custom_incoming_message, R.layout.item_custom_outgoing_message)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -103,7 +103,8 @@ class MainActivity : AppCompatActivity() {
 
     fun setTheme2() {
 
-        val color1 = Color.parseColor("#FFF3F9FF")
+//        val color1 = Color.parseColor("#FFF3F9FF")
+        val color1 = Color.parseColor("#000000")
         val color2 = Color.parseColor("#EFfffD")
         val color3 = Color.parseColor("#3B98D6")
         val color4 = Color.parseColor("#176EA8")

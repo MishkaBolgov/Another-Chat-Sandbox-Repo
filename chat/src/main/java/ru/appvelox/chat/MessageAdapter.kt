@@ -104,7 +104,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
-        var layout = when (viewType) {
+        val layout = when (viewType) {
             MessageType.INCOMING.type -> appearance.incomingMessageLayout
             MessageType.OUTGOING.type -> appearance.outgoingMessageLayout
             MessageType.INCOMING_IMAGE.type -> appearance.incomingImageLayout
@@ -162,7 +162,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
 //        }
 
         if (position == 0) {
-            holder.bind(message, true, appearance.getDateFormatter())
+            holder.bind(message, true, appearance.getDateFormatter(), getItemViewType(position).toMessageType())
             return
         }
 
@@ -172,7 +172,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         val daysBetweenMessages = Days.daysBetween(messageDate, previousMessageDate).days
         val showMessageDate = daysBetweenMessages != 0
 
-        holder.bind(message, showMessageDate, appearance.getDateFormatter())
+        holder.bind(message, showMessageDate, appearance.getDateFormatter(), getItemViewType(position).toMessageType())
 
 
     }
@@ -186,7 +186,8 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         return if (message.isIncoming()) {
             if (message.getImageUrl() == null)
                 MessageType.INCOMING.type
-            else MessageType.INCOMING_IMAGE.type
+            else
+                MessageType.INCOMING_IMAGE.type
         } else {
             if (message.getImageUrl() == null)
                 MessageType.OUTGOING.type
@@ -200,9 +201,6 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         return messageAuthorId != currentUserId
     }
 
-    enum class MessageType(val type: Int) {
-        INCOMING(0), OUTGOING(1), INCOMING_IMAGE(2), OUTGOING_IMAGE(3)
-    }
 
     fun requestPreviousMessagesFromListener() {
         loadMoreListener?.requestPreviousMessages(20, messageList.size, object : ChatView.LoadMoreCallback {

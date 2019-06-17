@@ -22,7 +22,7 @@ open class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         view.imageViewLeftSwipeActionIcon?.imageAlpha = 0
     }
 
-    open fun bind(message: Message, showMessageDate: Boolean = false, dateFormatter: ChatView.DateFormatter, messageType: MessageType) {
+    open fun bind(message: Message, showMessageDate: Boolean = false, dateFormatter: ChatView.DateFormatter, messageType: MessageType, radius: Float) {
         this.message = message
         itemView.authorName.text = message.getAuthor().getName()
         itemView.message.text = message.getText()

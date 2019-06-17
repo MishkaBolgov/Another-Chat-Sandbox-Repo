@@ -13,11 +13,12 @@ class ImageViewHolder(view: View) : MessageViewHolder(view) {
         message: Message,
         showMessageDate: Boolean,
         dateFormatter: ChatView.DateFormatter,
-        messageType: MessageType
+        messageType: MessageType,
+        radius: Float
     ) {
         val transformation = when (messageType.type) {
-            MessageType.INCOMING_IMAGE.type -> ImageTransformation(20f)
-            else -> ImageTransformation(20f)
+            MessageType.INCOMING_IMAGE.type -> IncomingImageTransformation(radius)
+            else -> OutgoingImageTransformation(radius)
         }
         Picasso.get()
             .load(message.getImageUrl())
@@ -26,6 +27,7 @@ class ImageViewHolder(view: View) : MessageViewHolder(view) {
             .memoryPolicy(MemoryPolicy.NO_CACHE)
 //                .fit()
 //                .centerInside()
+
             .into(itemView.image)
 
     }

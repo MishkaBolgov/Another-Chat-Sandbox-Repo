@@ -162,7 +162,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
 //        }
 
         if (position == 0) {
-            holder.bind(message, true, appearance.getDateFormatter(), getItemViewType(position).toMessageType())
+            holder.bind(message, true, appearance.getDateFormatter(), getItemViewType(position).toMessageType(), appearance.messageBackgroundCornerRadius)
             return
         }
 
@@ -172,7 +172,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         val daysBetweenMessages = Days.daysBetween(messageDate, previousMessageDate).days
         val showMessageDate = daysBetweenMessages != 0
 
-        holder.bind(message, showMessageDate, appearance.getDateFormatter(), getItemViewType(position).toMessageType())
+        holder.bind(message, showMessageDate, appearance.getDateFormatter(), getItemViewType(position).toMessageType(), appearance.messageBackgroundCornerRadius)
 
 
     }

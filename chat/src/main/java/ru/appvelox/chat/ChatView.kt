@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import ru.appvelox.chat.model.Author
 import ru.appvelox.chat.model.Message
+import ru.appvelox.chat.model.TextMessage
 import java.util.*
 
 class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet) {
@@ -41,16 +42,16 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         val itemTouchHelper = ItemTouchHelper(swipeToReplyCallback)
         itemTouchHelper.attachToRecyclerView(this)
         swipeToReplyCallback.listener = object : OnSwipeActionListener {
-            override fun onAction(message: Message) {
-                Toast.makeText(context, "Reply on message #${message.getId()}", Toast.LENGTH_SHORT).show()
+            override fun onAction(textMessage: Message) {
+                Toast.makeText(context, "Reply on textMessage #${textMessage.getId()}", Toast.LENGTH_SHORT).show()
             }
         }
 
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ChatView)
 
         adapter.onReplyClickListener = object : OnReplyClickListener {
-            override fun onReplyClick(message: Message) {
-                navigateToMessage(message)
+            override fun onReplyClick(textMessage: Message) {
+                navigateToMessage(textMessage)
             }
         }
     }
@@ -58,8 +59,8 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
     fun setSelectOnClick(b: Boolean) {
         if (b)
             adapter.onItemClickListener = object : OnMessageClickListener {
-                override fun onClick(message: Message) {
-                    adapter.changeMessageSelection(message)
+                override fun onClick(textMessage: Message) {
+                    adapter.changeMessageSelection(textMessage)
                 }
             }
         else {
@@ -68,8 +69,8 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         }
     }
 
-    fun addMessage(message: Message) {
-        adapter.addNewMessage(message)
+    fun addMessage(textMessage: Message) {
+        adapter.addNewMessage(textMessage)
         layoutManager?.scrollToPosition(adapter.getLastMessageIndex())
     }
 
@@ -77,8 +78,8 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.currentUserId = id
     }
 
-    fun navigateToMessage(message: Message) {
-        val scrollTo = adapter.getPositionOfMessage(message)
+    fun navigateToMessage(textMessage: Message) {
+        val scrollTo = adapter.getPositionOfMessage(textMessage)
         layoutManager?.scrollToPosition(scrollTo)
     }
 
@@ -86,16 +87,16 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         fun requestPreviousMessages(count: Int, alreadyLoadedMessagesCount: Int, callback: LoadMoreCallback)
     }
 
-    fun addOldMessages(messages: List<Message>) {
-        adapter.addOldMessages(messages)
+    fun addOldMessages(textMessages: List<TextMessage>) {
+        adapter.addOldMessages(textMessages)
     }
 
-    fun deleteMessage(message: Message) {
-        adapter.deleteMessage(message)
+    fun deleteMessage(textMessage: TextMessage) {
+        adapter.deleteMessage(textMessage)
     }
 
-    fun updateMessage(message: Message) {
-        adapter.updateMessage(message)
+    fun updateMessage(textMessage: TextMessage) {
+        adapter.updateMessage(textMessage)
     }
 
     fun setMessageBackgroundCornerRadius(radius: Float) {
@@ -183,12 +184,17 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.notifyAppearanceChanged()
     }
 
+    fun setMinWidth(width: Int) {
+        adapter.appearance.minMessageWidth = width
+        adapter.notifyAppearanceChanged()
+    }
+
     fun notifyDatasetChanged() {
         adapter.notifyDataSetChanged()
     }
 
-    fun addMessages(messages: MutableList<Message>) {
-        adapter.addMessages(messages)
+    fun addMessages(textMessages: MutableList<TextMessage>) {
+        adapter.addMessages(textMessages)
     }
 
     fun setLayout(incomingMessageLayout: Int?, outgoingMessageLayout: Int?) {
@@ -208,24 +214,25 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.notifyAppearanceChanged()
     }
 
+
     interface LoadMoreCallback {
-        fun onResult(messages: List<Message>)
+        fun onResult(textMessages: List<Message>)
     }
 
     interface OnMessageClickListener {
-        fun onClick(message: Message)
+        fun onClick(textMessage: Message)
     }
 
     interface OnReplyClickListener {
-        fun onReplyClick(message: Message)
+        fun onReplyClick(textMessage: Message)
     }
 
     interface OnSwipeActionListener {
-        fun onAction(message: Message)
+        fun onAction(textMessage: Message)
     }
 
     interface OnMessageLongClickListener {
-        fun onLongClick(message: Message)
+        fun onLongClick(textMessage: Message)
     }
 
     interface OnAvatarClickListener {

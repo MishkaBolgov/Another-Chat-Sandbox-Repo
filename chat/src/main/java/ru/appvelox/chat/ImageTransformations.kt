@@ -44,7 +44,7 @@ class CircularAvatar : Transformation {
 }
 
 
-abstract class ImageTransformation(val radius: Float) : Transformation {
+abstract class ImageTransformation(val radius: Float, val minWidth: Int, val minHeight: Int, val maxWidth: Int, val maxHeight: Int) : Transformation {
     //    override fun transform(source: Bitmap): Bitmap {
 //        val size = Math.min(source.width, source.height)
 //
@@ -122,13 +122,13 @@ abstract class ImageTransformation(val radius: Float) : Transformation {
         return shapedBitmap // bitmap
     }
 
-    override fun key() = "image_rounded"
+    override fun key() = "image rounded $minWidth $minHeight $maxWidth $maxHeight"
 
     abstract fun drawCorner(r: Float, size: Int, canvas: Canvas, paint: Paint)
 
 }
 
-class IncomingImageTransformation(radius: Float) : ImageTransformation(radius) {
+class IncomingImageTransformation(radius: Float, minWidth: Int, minHeight: Int, maxWidth: Int, maxHeight: Int) : ImageTransformation(radius, minWidth, minHeight, maxWidth, maxHeight) {
     override fun drawCorner(r: Float, size: Int, canvas: Canvas, paint: Paint) {
         canvas.drawRect(0f, 0f, r, r, paint)
     }
@@ -136,7 +136,7 @@ class IncomingImageTransformation(radius: Float) : ImageTransformation(radius) {
     override fun key() = "incoming_rounded"
 }
 
-class OutgoingImageTransformation(radius: Float) : ImageTransformation(radius) {
+class OutgoingImageTransformation(radius: Float, minWidth: Int, minHeight: Int, maxWidth: Int, maxHeight: Int) : ImageTransformation(radius, minWidth, minHeight, maxWidth, maxHeight) {
     override fun drawCorner(r: Float, size: Int, canvas: Canvas, paint: Paint) {
         canvas.drawRect(size - r, 0f, size.toFloat(), r, paint)
     }

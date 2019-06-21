@@ -2,19 +2,15 @@ package ru.appvelox.chat
 
 import android.os.Handler
 import android.os.Looper
-import android.provider.Telephony
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_message.view.*
 import org.joda.time.DateTime
 import org.joda.time.Days
 import ru.appvelox.chat.model.Message
+import ru.appvelox.chat.model.TextMessage
 
-open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Message>? = null) :
+open class MessageAdapter(val appearance: ChatAppearance, initTextMessages: List<TextMessage>? = null) :
     RecyclerView.Adapter<MessageViewHolder>() {
 
     var onReplyClickListener: ChatView.OnReplyClickListener? = null
@@ -38,8 +34,8 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         }
 
     internal val messageList = mutableListOf<Message>().apply {
-        if (initMessages != null)
-            addAll(initMessages)
+        if (initTextMessages != null)
+            addAll(initTextMessages)
     }
 
     internal val selectedMessageList = mutableListOf<Message>()
@@ -115,9 +111,9 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
 
         val viewHolder = when (viewType) {
-            MessageType.INCOMING.type, MessageType.OUTGOING.type -> MessageViewHolder(view)
-            MessageType.INCOMING_IMAGE.type, MessageType.OUTGOING_IMAGE.type -> ImageViewHolder(view)
-            else -> MessageViewHolder(view)
+            MessageType.INCOMING.type, MessageType.OUTGOING.type -> TextMessageViewHolder(view, appearance.getDateFormatter())
+            MessageType.INCOMING_IMAGE.type, MessageType.OUTGOING_IMAGE.type -> ImageViewHolder(view, appearance.getDateFormatter(), appearance.messageBackgroundCornerRadius)
+            else -> TextMessageViewHolder(view, appearance.getDateFormatter())
         }
 
         return viewHolder
@@ -135,7 +131,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
 //            view.findViewById<ViewGroup>(R.id.messageContainer).setOnClickListener(null)
 //        } else {
 //            view.findViewById<ViewGroup>(R.id.messageContainer).setOnClickListener {
-//                onItemClickListener?.onClick(message)
+//                onItemClickListener?.onClick(textMessage)
 //            }
 //        }
 //
@@ -143,26 +139,26 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
 //            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener(null)
 //        } else {
 //            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener {
-//                onItemLongClickListener?.onLongClick(message)
+//                onItemLongClickListener?.onLongClick(textMessage)
 //                true
 //            }
 //        }
 //
 //        view.findViewById<ViewGroup>(R.id.replyContainer).setOnClickListener {
-//            message.getRepliedMessage()?.let {
+//            textMessage.getRepliedMessage()?.let {
 //                onReplyClickListener?.onReplyClick(it)
 //            }
 //        }
 //
 //        onItemLongClickListener?.let { listener ->
 //            view.findViewById<ViewGroup>(R.id.messageContainer).setOnLongClickListener {
-//                listener.onLongClick(message)
+//                listener.onLongClick(textMessage)
 //                true
 //            }
 //        }
 
         if (position == 0) {
-            holder.bind(message, true, appearance.getDateFormatter(), getItemViewType(position).toMessageType(), appearance.messageBackgroundCornerRadius)
+            holder.bind(message, true, getItemViewType(position).toMessageType())
             return
         }
 
@@ -172,8 +168,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         val daysBetweenMessages = Days.daysBetween(messageDate, previousMessageDate).days
         val showMessageDate = daysBetweenMessages != 0
 
-        holder.bind(message, showMessageDate, appearance.getDateFormatter(), getItemViewType(position).toMessageType(), appearance.messageBackgroundCornerRadius)
-
+        holder.bind(message, showMessageDate, getItemViewType(position).toMessageType())
 
     }
 
@@ -184,12 +179,12 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
     override fun getItemViewType(position: Int): Int {
         val message = messageList[position]
         return if (message.isIncoming()) {
-            if (message.getImageUrl() == null)
+            if (message is TextMessage)
                 MessageType.INCOMING.type
             else
                 MessageType.INCOMING_IMAGE.type
         } else {
-            if (message.getImageUrl() == null)
+            if (message is TextMessage)
                 MessageType.OUTGOING.type
             else
                 MessageType.OUTGOING_IMAGE.type
@@ -219,20 +214,20 @@ open class MessageAdapter(val appearance: ChatAppearance, initMessages: List<Mes
         return messageList.indexOf(message)
     }
 
-    fun deleteMessage(message: Message) {
-        val position = messageList.indexOf(message)
-        messageList.remove(message)
+    fun deleteMessage(textMessage: TextMessage) {
+        val position = messageList.indexOf(textMessage)
+        messageList.remove(textMessage)
         notifyItemRemoved(position)
     }
 
-    fun updateMessage(message: Message) {
-        val index = messageList.indexOf(messageList.find { it.getId() == message.getId() })
-        messageList[index] = message
+    fun updateMessage(textMessage: TextMessage) {
+        val index = messageList.indexOf(messageList.find { it.getId() == textMessage.getId() })
+        messageList[index] = textMessage
         notifyItemChanged(index)
     }
 
-    fun addMessages(messages: MutableList<Message>) {
-        messageList.addAll(messages)
+    fun addMessages(textMessages: MutableList<TextMessage>) {
+        messageList.addAll(textMessages)
         notifyDataSetChanged()
     }
 }

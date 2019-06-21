@@ -1,6 +1,5 @@
 package ru.appvelox.chat.model
 
-import java.time.Instant
 import java.util.*
 
 interface Message {
@@ -10,6 +9,4 @@ interface Message {
     fun getDate(): Date
     fun isSent(): Boolean?
     fun isRead(): Boolean?
-    fun getRepliedMessage(): Message?
-    fun getImageUrl(): String?
 }

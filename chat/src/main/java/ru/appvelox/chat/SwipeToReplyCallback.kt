@@ -8,8 +8,8 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_message.view.*
-import kotlinx.android.synthetic.main.left_swipe_action_icon.view.*
 import ru.appvelox.chat.model.Message
+import ru.appvelox.chat.model.TextMessage
 import kotlin.math.abs
 
 class SwipeToReplyCallback : ItemTouchHelper.Callback() {
@@ -88,7 +88,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
 
     private var isVibrationCompleted = false
     private var lastDXPosition = 0f
-    private var currentSwipingMessage: Message? = null
+    private var currentSwipingTextMessage: Message? = null
 
     override fun onChildDraw(
         c: Canvas,
@@ -101,7 +101,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
     ) {
 
         lastDXPosition = dX
-        currentSwipingMessage = (viewHolder as MessageViewHolder).message
+        currentSwipingTextMessage = (viewHolder as MessageViewHolder).message
 
         setTouchListener(recyclerView)
 
@@ -138,7 +138,7 @@ class SwipeToReplyCallback : ItemTouchHelper.Callback() {
     private fun setTouchListener(recyclerView: RecyclerView) {
         recyclerView.setOnTouchListener { v, event ->
             if(event.action == MotionEvent.ACTION_UP && lastDXPosition <= -triggerOffset )
-                currentSwipingMessage?.let {
+                currentSwipingTextMessage?.let {
                     listener?.onAction(it)
                 }
             false

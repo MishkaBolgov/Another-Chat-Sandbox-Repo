@@ -7,7 +7,7 @@ import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import ru.appvelox.chat.model.Message
+import ru.appvelox.chat.model.TextMessage
 
 internal class AdapterTest {
     var appearance = mockk<ChatAppearance>()
@@ -23,7 +23,7 @@ internal class AdapterTest {
 
     @Test
     fun addNewMessage_messageAddedToMessageList() {
-        val message = mockk<Message>()
+        val message = mockk<TextMessage>()
 
         every { adapter.notifyItemInserted(any()) } returns Unit
 
@@ -36,7 +36,7 @@ internal class AdapterTest {
 
     @Test
     fun addNewMessage_adapterNotified() {
-        val message = mockk<Message>()
+        val message = mockk<TextMessage>()
 
         every { adapter.notifyItemInserted(any()) } returns Unit
 
@@ -48,7 +48,7 @@ internal class AdapterTest {
 
     @Test
     fun addOldMessages_adapterNotified() {
-        val messages = listOf(mockk<Message>(), mockk(),mockk())
+        val messages = listOf(mockk<TextMessage>(), mockk(),mockk())
 
         every { adapter.notifyMessagesInserted(any())} returns Unit
 
@@ -59,7 +59,7 @@ internal class AdapterTest {
 
     @Test
     fun addOldMessages_messagesAddedToMessageList() {
-        val messages = listOf(mockk<Message>(), mockk(),mockk())
+        val messages = listOf(mockk<TextMessage>(), mockk(),mockk())
 
         every { adapter.notifyMessagesInserted(any())} returns Unit
 
@@ -72,7 +72,7 @@ internal class AdapterTest {
 
     @Test
     fun changeMessageSelection_messageAddedInSelectedIfNotSelected() {
-        val message = mockk<Message>()
+        val message = mockk<TextMessage>()
 
         every { adapter.notifyItemChanged(any(), any())} returns Unit
 
@@ -83,7 +83,7 @@ internal class AdapterTest {
 
     @Test
     fun changeMessageSelection_messageRemovedFromSelectedIfSelected() {
-        val message = mockk<Message>()
+        val message = mockk<TextMessage>()
 
         every { adapter.notifyItemChanged(any(), any())} returns Unit
 
@@ -95,7 +95,7 @@ internal class AdapterTest {
 
     @Test
     fun changeMessageSelection_adapterNotified() {
-        val message = mockk<Message>()
+        val message = mockk<TextMessage>()
 
         every { adapter.notifyItemChanged(any(), any())} returns Unit
 

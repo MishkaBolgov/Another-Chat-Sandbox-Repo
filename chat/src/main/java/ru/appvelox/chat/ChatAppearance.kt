@@ -11,6 +11,13 @@ interface ChatAppearance {
     var messageTextSize: Float
     var authorNameSize: Float
     var maxMessageWidth: Int
+    var minMessageWidth: Int
+
+    var maxImageMessageHeight: Int
+    val minImageMessageHeight: Int
+    var maxImageMessageWidth: Int
+    val minImageMessageWidth: Int
+
     var dateTextSize: Float
     var timeTextSize: Float
 

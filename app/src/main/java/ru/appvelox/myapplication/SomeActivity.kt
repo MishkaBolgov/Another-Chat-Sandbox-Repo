@@ -34,7 +34,6 @@ class SomeAdapter: RecyclerView.Adapter<SomeViewHolder>(){
     override fun getItemCount() = 100
 
     override fun onBindViewHolder(holder: SomeViewHolder, position: Int) {
-        holder.itemView.message.text = MessageGenerator.generateMessageText(Random.nextInt(20))
     }
 }
 

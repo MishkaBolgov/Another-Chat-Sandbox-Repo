@@ -37,7 +37,13 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
     override var dateTextColor: Int = Color.GRAY
     override var timeTextColor: Int = Color.GRAY
 
-    override var maxMessageWidth: Int = 500
+    override var maxMessageWidth: Int = 600
+    override var minMessageWidth: Int = 500
+
+    override var maxImageMessageWidth: Int = maxMessageWidth
+    override var maxImageMessageHeight: Int = maxMessageWidth * 2
+    override val minImageMessageWidth: Int = 100
+    override val minImageMessageHeight: Int = minImageMessageWidth
 
     override var isIncomingAvatarVisible = false
     override var isOutgoingAvatarVisible = false

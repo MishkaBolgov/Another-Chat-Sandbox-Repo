@@ -4,11 +4,13 @@ import android.graphics.Color
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.appvelox.chat.*
 import ru.appvelox.chat.model.Message
+import ru.appvelox.chat.model.TextMessage
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -49,25 +51,17 @@ class MainActivity : AppCompatActivity() {
         message.setText(MessageGenerator.generateMessageText())
 
         send.setOnClickListener {
-            if(message.text.toString().isEmpty())
-                message.setText(MessageGenerator.generateMessageText())
-            chatView.addMessage(MessageGenerator.generateMessage(false, message.text.toString()))
-            message.setText(MessageGenerator.generateMessageText())
+            sendMessage()
         }
 
         sendContainer.setOnClickListener {
-            if(message.text.toString().isEmpty())
-                message.setText(MessageGenerator.generateMessageText())
-            chatView.addMessage(MessageGenerator.generateMessage(false, message.text.toString()))
-            message.setText(MessageGenerator.generateMessageText())
+            sendMessage()
         }
 
 
-//        val initialMessages = mutableListOf<Message>()
+//        val initialMessages = mutableListOf<TextMessage>()
 //        for(counter in 0..50)
-//            initialMessages.add(MessageGenerator.generateMessage(false, message.text.toString()))
-
-
+//            initialMessages.add(MessageGenerator.generateMessage(false, textMessage.text.toString()))
 
 //        chatView.addMessages(initialMessages)
 
@@ -82,6 +76,15 @@ class MainActivity : AppCompatActivity() {
         }
 
 //        chatView.setLayout(R.layout.item_custom_incoming_message, R.layout.item_custom_outgoing_message)
+    }
+
+    fun sendMessage(){
+//        Log.d("mylog, ")
+
+//        if(message.text.toString().isEmpty())
+//            message.setText(MessageGenerator.generateMessageText())
+//        chatView.addMessage(MessageGenerator.generateMessage(false, message.text.toString()))
+//        message.setText(MessageGenerator.generateMessageText())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -151,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         chatView.setIncomingSelectedMessageBackgroundColor(colorSelect)
         chatView.setOutgoingSelectedMessageBackgroundColor(colorSelect)
 
-        chatView.setMaxWidth(800)
+//        chatView.setMaxWidth(800)
 
         chatView.setSelectOnClick(true)
     }
@@ -202,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         chatView.setIncomingSelectedMessageBackgroundColor(color1)
         chatView.setOutgoingSelectedMessageBackgroundColor(color1)
 
-        chatView.setMaxWidth(400)
+//        chatView.setMaxWidth(400)
 
         chatView.setSelectOnClick(false)
     }
@@ -265,7 +268,8 @@ class MainActivity : AppCompatActivity() {
         )
         chatView.setIsReadColor(Color.argb(255, Random.nextInt(255), Random.nextInt(255), Random.nextInt(255)))
 
-        chatView.setMaxWidth(Random.nextInt(1000))
+//        chatView.setMaxWidth(Random.nextInt(1000))
+//        chatView.setMinWidth(Random.nextInt(1000))
 
         chatView.setSelectOnClick(true)
     }

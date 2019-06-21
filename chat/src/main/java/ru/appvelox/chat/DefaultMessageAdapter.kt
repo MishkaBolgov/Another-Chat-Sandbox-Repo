@@ -3,13 +3,12 @@ package ru.appvelox.chat
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import ru.appvelox.chat.model.Message
+import ru.appvelox.chat.model.TextMessage
 
-class DefaultMessageAdapter(appearance: ChatAppearance, initMessages: List<Message>? = null): MessageAdapter(appearance, initMessages) {
+class DefaultMessageAdapter(appearance: ChatAppearance, initTextMessages: List<TextMessage>? = null): MessageAdapter(appearance, initTextMessages) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val viewHolder = super.onCreateViewHolder(parent, viewType)
@@ -115,7 +114,7 @@ class DefaultMessageAdapter(appearance: ChatAppearance, initMessages: List<Messa
         imageViewLeftSwipeActionIcon.setImageDrawable(appearance.getSwipeActionIcon())
 
         messageContainer.maxWidth = appearance.maxMessageWidth
-
+        messageContainer.minWidth = appearance.minMessageWidth
     }
 
     private fun View.applyIncomingConstraints() {

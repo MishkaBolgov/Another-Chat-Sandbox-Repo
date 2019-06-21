@@ -1,9 +1,9 @@
 package ru.appvelox.myapplication
 
-import android.graphics.Bitmap
-import android.util.Log
 import ru.appvelox.chat.model.Author
+import ru.appvelox.chat.model.ImageMessage
 import ru.appvelox.chat.model.Message
+import ru.appvelox.chat.model.TextMessage
 import java.lang.StringBuilder
 import java.util.*
 import kotlin.random.Random
@@ -58,10 +58,10 @@ object MessageGenerator {
             return currentDate
         }
 
-    val messagesList = mutableListOf<Message>()
+    val messagesList = mutableListOf<TextMessage>()
 
     fun generateMessage(oldMessages: Boolean): Message {
-        return object : Message {
+        return if(Random.nextBoolean()) object : TextMessage {
 
             private val mId = nextId
             private val mUser = when (Random.nextInt(3)) {
@@ -84,7 +84,54 @@ object MessageGenerator {
             private val mIsRead = Random.nextBoolean()
             private val mIsSent = !mIsRead
 
-            private val mImageUrl = /*if(Random.nextInt(10) < 5)*/ "https://i.ytimg.com/vi/BfCwN4iy6T8/maxresdefault.jpg" /* else null */
+            override fun getId(): Long {
+                return mId
+            }
+
+            override fun getText(): String {
+                return mMessageText
+            }
+
+            override fun getAuthor(): Author {
+                return mUser
+            }
+
+            override fun getDate(): Date {
+                return mDate
+            }
+
+            override fun getRepliedMessage(): TextMessage? {
+                return repliedOn
+            }
+
+            override fun isSent(): Boolean? {
+                return mIsSent
+            }
+
+            override fun isRead(): Boolean? {
+                return mIsRead
+            }
+
+        }.also { messagesList.add(it) }
+        else object: ImageMessage{
+            private val mId = nextId
+            private val mUser = when (Random.nextInt(3)) {
+                0 -> user1
+                1 -> user2
+                2 -> user3
+                else -> user3
+            }
+            private val mMessageText = MessageGenerator.generateMessageText()
+            private val mDate = if (oldMessages) previousDate else nextDate
+
+            private val mIsRead = Random.nextBoolean()
+            private val mIsSent = !mIsRead
+            private val mImageUrl = "https://divo-dacha.ru/wp-content/uploads/2016/06/piony-opisanie-istoriya-legendy-01.jpg"
+
+
+            override fun getImageUrl(): String? {
+                return mImageUrl
+            }
 
             override fun getId(): Long {
                 return mId
@@ -102,10 +149,6 @@ object MessageGenerator {
                 return mDate
             }
 
-            override fun getRepliedMessage(): Message? {
-                return repliedOn
-            }
-
             override fun isSent(): Boolean? {
                 return mIsSent
             }
@@ -113,15 +156,11 @@ object MessageGenerator {
             override fun isRead(): Boolean? {
                 return mIsRead
             }
-
-            override fun getImageUrl(): String? {
-                return mImageUrl
-            }
-        }.also { messagesList.add(it) }
+        }
     }
 
-    fun generateMessage(oldMessages: Boolean, messageText: String): Message {
-        return object : Message {
+    fun generateMessage(oldMessages: Boolean, messageText: String): TextMessage {
+        return object : TextMessage {
 
             private val mId = nextId
             private val mUser = when (Random.nextInt(3)) {
@@ -144,8 +183,6 @@ object MessageGenerator {
             private val mIsRead = Random.nextBoolean()
             private val mIsSent = !mIsRead
 
-            private val mImageUrl = if(Random.nextInt(10) < 5)  "https://i.ytimg.com/vi/BfCwN4iy6T8/maxresdefault.jpg"  else null
-
             override fun getId(): Long {
                 return mId
             }
@@ -162,7 +199,7 @@ object MessageGenerator {
                 return mDate
             }
 
-            override fun getRepliedMessage(): Message? {
+            override fun getRepliedMessage(): TextMessage? {
                 return repliedOn
             }
 
@@ -174,9 +211,6 @@ object MessageGenerator {
                 return mIsRead
             }
 
-            override fun getImageUrl(): String? {
-                return mImageUrl
-            }
         }.also { messagesList.add(it) }
     }
 

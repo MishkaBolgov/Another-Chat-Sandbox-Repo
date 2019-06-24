@@ -35,6 +35,7 @@ interface ChatAppearance {
     var authorNameColor: Int
     var dateTextColor: Int
     var timeTextColor: Int
+    var imageTimeTextColor: Int
 
 //    Visibility
     var isIncomingAvatarVisible: Boolean
@@ -57,6 +58,7 @@ interface ChatAppearance {
     fun getIncomingSelectedMessageBackground(isInChain: Boolean = false): Drawable
     fun getSwipeActionIcon(): Drawable?
     fun getReadIndicatorIcon(): Drawable?
+    fun getTimeBackground(): Drawable?
 
     fun getDateFormatter(): ChatView.DateFormatter
 

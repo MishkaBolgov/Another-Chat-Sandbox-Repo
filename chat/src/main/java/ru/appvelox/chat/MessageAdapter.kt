@@ -111,8 +111,19 @@ open class MessageAdapter(val appearance: ChatAppearance, initTextMessages: List
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
 
         val viewHolder = when (viewType) {
-            MessageType.INCOMING.type, MessageType.OUTGOING.type -> TextMessageViewHolder(view, appearance.getDateFormatter())
-            MessageType.INCOMING_IMAGE.type, MessageType.OUTGOING_IMAGE.type -> ImageViewHolder(view, appearance.getDateFormatter(), appearance.messageBackgroundCornerRadius)
+            MessageType.INCOMING.type, MessageType.OUTGOING.type -> TextMessageViewHolder(
+                view,
+                appearance.getDateFormatter()
+            )
+            MessageType.INCOMING_IMAGE.type, MessageType.OUTGOING_IMAGE.type -> ImageViewHolder(
+                view,
+                appearance.getDateFormatter(),
+                appearance.messageBackgroundCornerRadius,
+                appearance.minImageMessageWidth,
+                appearance.minImageMessageHeight,
+                appearance.maxImageMessageWidth,
+                appearance.maxImageMessageHeight
+            )
             else -> TextMessageViewHolder(view, appearance.getDateFormatter())
         }
 

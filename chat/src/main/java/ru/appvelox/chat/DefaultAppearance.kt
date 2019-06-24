@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.graphics.drawable.DrawableCompat
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,10 +37,11 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
     override var dateTextSize: Float = 14f
     override var timeTextSize: Float = 12f
     override var dateTextColor: Int = Color.GRAY
-    override var timeTextColor: Int = Color.GRAY
+    override var timeTextColor: Int = Color.DKGRAY
+    override var imageTimeTextColor: Int = Color.WHITE
 
-    override var maxMessageWidth: Int = 600
-    override var minMessageWidth: Int = 500
+    override var maxMessageWidth: Int = 800
+    override var minMessageWidth: Int = 200
 
     override var maxImageMessageWidth: Int = maxMessageWidth
     override var maxImageMessageHeight: Int = maxMessageWidth * 2
@@ -117,6 +120,7 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
 
     var swipeActionIconResource = R.drawable.ic_reply_black_24dp
     var readIcon = R.drawable.ic_done_all_black_24dp
+    var timeBackgroundCapsule = R.drawable.time_background_capsule
 
     override fun getSwipeActionIcon(): Drawable? {
         return context.resources.getDrawable(swipeActionIconResource)
@@ -124,6 +128,12 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
 
     override fun getReadIndicatorIcon(): Drawable? {
         return context.resources.getDrawable(readIcon)
+    }
+
+    override fun getTimeBackground(): Drawable? {
+        val drawable = AppCompatResources.getDrawable(context, timeBackgroundCapsule)?:return null
+        val resultDrawable = DrawableCompat.setTint(drawable, Color.parseColor("#70000000"))
+        return drawable
     }
 
     var mDateFormatter: ChatView.DateFormatter? = null

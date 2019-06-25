@@ -16,10 +16,6 @@ class DefaultMessageAdapter(appearance: ChatAppearance, initTextMessages: List<T
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val viewHolder = super.onCreateViewHolder(parent, viewType)
 
-        when (viewType) {
-            MessageType.INCOMING.type -> applyIncomingAppearance(viewHolder.itemView, MessageType.INCOMING)
-            MessageType.OUTGOING.type -> applyOutgoingAppearance(viewHolder.itemView, MessageType.OUTGOING)
-        }
 
         return viewHolder
     }
@@ -29,55 +25,81 @@ class DefaultMessageAdapter(appearance: ChatAppearance, initTextMessages: List<T
 
         val message = messageList[position]
 
-        if (selectedMessageList.contains(message))
-            if (message.isIncoming())
-                applyIncomingSelectedAppearance(holder.itemView, MessageType.INCOMING)
-            else
-                applyOutgoingSelectedAppearance(holder.itemView, MessageType.OUTGOING)
-        else
-            if (message.isIncoming())
-                applyIncomingAppearance(holder.itemView, MessageType.INCOMING, message)
-            else
-                applyOutgoingAppearance(holder.itemView, MessageType.OUTGOING, message)
+        applyStyle(holder.itemView, getItemViewType(position).toMessageType())
+
+//        if (selectedMessageList.contains(message))
+//            if (message.isIncoming())
+//                applyIncomingSelectedAppearance(holder.itemView)
+//            else
+//                applyOutgoingSelectedAppearance(holder.itemView)
+//        else
+//            if (message.isIncoming())
+//                applyIncomingAppearance(holder.itemView)
+//            else
+//                applyOutgoingAppearance(holder.itemView)
     }
 
-    private fun applyOutgoingAppearance(view: View, messageType: MessageType, message: Message? = null) {
-        applyCommonStyle(view, messageType, message)
-        applyOutgoingConstraints(view, messageType)
+    fun applyStyle(view: View, messageType: MessageType) {
 
+        applyCommonStyle(view)
 
-        val isRead = view.findViewById<View>(R.id.isRead)
+        when (messageType) {
+            MessageType.INCOMING_TEXT -> applyIncomingTextMessageAppearance(view)
+            MessageType.INCOMING_IMAGE -> applyIncomingImageMessageAppearance(view)
+            MessageType.OUTGOING_TEXT -> applyOutgoingTextMessageAppearance(view)
+            MessageType.OUTGOING_IMAGE -> applyOutgoingImageMessageAppearance(view)
+        }
+    }
+
+    fun applyIncomingTextMessageAppearance(view: View) {
+        applyIncomingConstraints(view)
+        applyIncomingAppearance(view)
+        applyTextTimeStyle(view)
+        applyReplyAuthorNameStyle(view)
+    }
+
+    fun applyIncomingImageMessageAppearance(view: View) {
+        applyIncomingConstraints(view)
+        applyIncomingAppearance(view)
+        applyImageTimeStyle(view)
+    }
+
+    fun applyOutgoingTextMessageAppearance(view: View) {
+        applyOutgoingConstraints(view)
+        applyOutgoingAppearance(view)
+        applyTextTimeStyle(view)
+        applyReplyAuthorNameStyle(view)
+    }
+
+    fun applyOutgoingImageMessageAppearance(view: View) {
+        applyOutgoingConstraints(view)
+        applyOutgoingAppearance(view)
+        applyImageTimeStyle(view)
+    }
+
+    private fun applyOutgoingAppearance(view: View) {
+        val statusIndicator = view.findViewById<View>(R.id.statusIndicator)
         val avatarContainer = view.findViewById<View>(R.id.avatarContainer)
         val authorName = view.findViewById<View>(R.id.authorName)
-        val replyAuthorName = view.findViewById<View?>(R.id.replyAuthorName)
         val messageContainer = view.findViewById<View>(R.id.messageContainer)
 
-        isRead.visibility = View.VISIBLE
         avatarContainer.visibility = if (appearance.isOutgoingAvatarVisible) View.VISIBLE else View.GONE
         authorName.visibility = if (appearance.isOutgoingAuthorNameVisible) View.VISIBLE else View.GONE
-        replyAuthorName?.visibility = if (appearance.isOutgoingAuthorNameVisible) View.VISIBLE else View.GONE
         messageContainer.background = appearance.getOutgoingMessageBackground()
     }
 
-    private fun applyIncomingAppearance(view: View, messageType: MessageType, message: Message? = null) {
-        applyCommonStyle(view, messageType, message)
-        applyIncomingConstraints(view, messageType)
-
-        val isRead = view.findViewById<View>(R.id.isRead)
+    private fun applyIncomingAppearance(view: View) {
+        val statusIndicator = view.findViewById<View>(R.id.statusIndicator)
         val avatarContainer = view.findViewById<View>(R.id.avatarContainer)
         val authorName = view.findViewById<View>(R.id.authorName)
-        val replyAuthorName = view.findViewById<View?>(R.id.replyAuthorName)
         val messageContainer = view.findViewById<View>(R.id.messageContainer)
 
-        isRead.visibility = View.GONE
         avatarContainer.visibility = if (appearance.isIncomingAvatarVisible) View.VISIBLE else View.GONE
         authorName.visibility = if (appearance.isIncomingAuthorNameVisible) View.VISIBLE else View.GONE
-        replyAuthorName?.visibility = if (appearance.isIncomingAuthorNameVisible) View.VISIBLE else View.GONE
         messageContainer.background = appearance.getIncomingMessageBackground()
     }
 
-    private fun applyCommonStyle(view: View, messageType: MessageType, message: Message? = null) {
-
+    private fun applyCommonStyle(view: View) {
         val date = view.findViewById<TextView>(R.id.date)
         val authorName = view.findViewById<TextView>(R.id.authorName)
         val messageText = view.findViewById<TextView?>(R.id.message)
@@ -100,15 +122,6 @@ class DefaultMessageAdapter(appearance: ChatAppearance, initTextMessages: List<T
         messageText?.setTextColor(appearance.messageColor)
         messageText?.textSize = appearance.messageTextSize
 
-        time.setTextColor(appearance.timeTextColor)
-
-//        todo: херня! Исправить!
-        if (message is ImageMessage) {
-            time.setTextColor(appearance.imageTimeTextColor)
-            val timeBackground = view.findViewById<ViewGroup>(R.id.timeContainer)
-            timeBackground.background = appearance.getTimeBackground()
-        }
-
         time.textSize = appearance.timeTextSize
 
         replyAuthorName?.setTextColor(appearance.replyAuthorNameColor)
@@ -119,16 +132,30 @@ class DefaultMessageAdapter(appearance: ChatAppearance, initTextMessages: List<T
 
         replyLine?.setBackgroundColor(appearance.replyLineColor)
 
-        isRead.setColorFilter(appearance.isReadColor)
-        isSent.setColorFilter(appearance.isSentColor)
-
         imageViewLeftSwipeActionIcon.setImageDrawable(appearance.getSwipeActionIcon())
 
         messageContainer.maxWidth = appearance.maxMessageWidth
         messageContainer.minWidth = appearance.minMessageWidth
     }
 
-    private fun applyIncomingConstraints(view: View, messageType: MessageType) {
+    private fun applyTextTimeStyle(view: View) {
+        val time = view.findViewById<TextView>(R.id.time)
+        time.setTextColor(appearance.timeTextColor)
+    }
+
+    private fun applyImageTimeStyle(view: View) {
+        val time = view.findViewById<TextView>(R.id.time)
+        time.setTextColor(appearance.imageTimeTextColor)
+        val timeBackground = view.findViewById<ViewGroup>(R.id.timeContainer)
+        timeBackground.background = appearance.getTimeBackground()
+    }
+
+    private fun applyReplyAuthorNameStyle(view: View) {
+        val replyAuthorName = view.findViewById<View>(R.id.replyAuthorName)
+        replyAuthorName.visibility = if (appearance.isOutgoingAuthorNameVisible) View.VISIBLE else View.GONE
+    }
+
+    private fun applyIncomingConstraints(view: View) {
         val contentContainer = view.findViewById<View>(R.id.contentContainer)
         val avatarContainer = view.findViewById<View>(R.id.avatarContainer)
         val messageContainer = view.findViewById<View>(R.id.messageContainer)
@@ -147,7 +174,7 @@ class DefaultMessageAdapter(appearance: ChatAppearance, initTextMessages: List<T
         constraintSet2.applyTo(messageContainer)
     }
 
-    private fun applyOutgoingConstraints(view: View, messageType: MessageType) {
+    private fun applyOutgoingConstraints(view: View) {
         val contentContainer = view.findViewById<View>(R.id.contentContainer)
         val avatarContainer = view.findViewById<View>(R.id.avatarContainer)
         val messageContainer = view.findViewById<View>(R.id.messageContainer)
@@ -166,14 +193,12 @@ class DefaultMessageAdapter(appearance: ChatAppearance, initTextMessages: List<T
         constraintSet2.applyTo(messageContainer)
     }
 
-    private fun applyOutgoingSelectedAppearance(view: View, messageType: MessageType) {
-        applyCommonStyle(view, messageType)
+    private fun applyOutgoingSelectedAppearance(view: View) {
         val messageContainer = view.findViewById<View>(R.id.messageContainer)
         messageContainer.background = appearance.getOutgoingSelectedMessageBackground()
     }
 
-    private fun applyIncomingSelectedAppearance(view: View, messageType: MessageType) {
-        applyCommonStyle(view, messageType)
+    private fun applyIncomingSelectedAppearance(view: View) {
         val messageContainer = view.findViewById<View>(R.id.messageContainer)
         messageContainer.background = appearance.getIncomingSelectedMessageBackground()
     }

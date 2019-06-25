@@ -15,8 +15,8 @@ import ru.appvelox.chat.model.Message
 import ru.appvelox.chat.model.TextMessage
 import java.lang.Exception
 
-class ImageViewHolder(view: View, dateFormatter: ChatView.DateFormatter, private val radius: Float, val minWidth: Int, val minHeight: Int, val maxWidth: Int, val maxHeight: Int) :
-    MessageViewHolder(view, dateFormatter) {
+class ImageViewHolder(view: View, appearance: ChatAppearance, dateFormatter: ChatView.DateFormatter, private val radius: Float, val minWidth: Int, val minHeight: Int, val maxWidth: Int, val maxHeight: Int) :
+    MessageViewHolder(view, appearance, dateFormatter) {
     override fun bind(
         message: Message,
         showMessageDate: Boolean,
@@ -48,26 +48,4 @@ class ImageViewHolder(view: View, dateFormatter: ChatView.DateFormatter, private
 
     }
 
-    fun transform(source: Bitmap): Bitmap {
-        val x = 0
-        val y = 0
-        val width = source.width
-        val height = source.height
-        val radius = 20f
-
-        val shapedBitmap = Bitmap.createBitmap(width, height, source.config)
-        val shaderBitmap = Bitmap.createBitmap(source, x, y, width, height)
-
-        val canvas = Canvas(shapedBitmap)
-        val paint = Paint()
-        val bitmapShader = BitmapShader(shaderBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
-        paint.shader = bitmapShader
-        paint.isAntiAlias = true
-
-        canvas.drawRoundRect(RectF(0f, 0f, width.toFloat(), height.toFloat()), radius, radius, paint)
-
-        source.recycle()
-        shaderBitmap.recycle()
-        return shapedBitmap // bitmap
-    }
 }

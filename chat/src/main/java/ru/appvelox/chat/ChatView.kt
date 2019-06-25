@@ -164,16 +164,6 @@ class ChatView(context: Context, attributeSet: AttributeSet) : RecyclerView(cont
         adapter.notifyAppearanceChanged()
     }
 
-    fun setIsReadColor(color: Int) {
-        adapter.appearance.isReadColor = color
-        adapter.notifyAppearanceChanged()
-    }
-
-    fun setIsSentColor(color: Int) {
-        adapter.appearance.isSentColor = color
-        adapter.notifyAppearanceChanged()
-    }
-
     fun setReplyLineColor(color: Int) {
         adapter.appearance.replyLineColor = color
         adapter.notifyAppearanceChanged()

@@ -8,8 +8,8 @@ import kotlinx.android.synthetic.main.item_message.view.*
 import ru.appvelox.chat.model.Message
 import ru.appvelox.chat.model.TextMessage
 
-class TextMessageViewHolder(view: View, dateFormatter: ChatView.DateFormatter) :
-    MessageViewHolder(view, dateFormatter) {
+class TextMessageViewHolder(view: View, appearance: ChatAppearance, dateFormatter: ChatView.DateFormatter) :
+    MessageViewHolder(view, appearance, dateFormatter) {
 
     init {
         view.imageViewLeftSwipeActionIcon?.imageAlpha = 0

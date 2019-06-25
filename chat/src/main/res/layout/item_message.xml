@@ -148,11 +148,10 @@
                     app:layout_constraintBottom_toTopOf="@+id/time"/>
 
             <ImageView
-                    android:id="@+id/isRead"
+                    android:id="@+id/statusIndicator"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_marginRight="8dp"
-                    android:src="@drawable/ic_done_all_black_24dp"
                     app:layout_constraintBottom_toBottomOf="@id/time"
                     app:layout_constraintTop_toTopOf="@id/time"
                     app:layout_constraintEnd_toStartOf="@id/time"/>

@@ -26,8 +26,6 @@ interface ChatAppearance {
     var incomingSelectedMessageBackgroundColor: Int
     var outgoingMessageBackgroundColor: Int
     var incomingMessageBackgroundColor: Int
-    var isSentColor: Int
-    var isReadColor: Int
     var replyLineColor: Int
     var replyMessageColor: Int
     var replyAuthorNameColor: Int
@@ -45,12 +43,11 @@ interface ChatAppearance {
     var isIncomingReplyAuthorNameVisible: Boolean
     var isOutgoingReplyAuthorNameVisible: Boolean
     var isSwipeActionIconVisible: Boolean
-    var isReadIconVisible: Boolean
 
-    var incomingMessageLayout: Int
-    var outgoingMessageLayout: Int
-    var incomingImageLayout: Int
-    var outgoingImageLayout: Int
+    var incomingTextMessageLayout: Int
+    var outgoingTextMessageLayout: Int
+    var incomingImageMessageLayout: Int
+    var outgoingImageMessageLayout: Int
 
     fun getOutgoingMessageBackground(isInChain: Boolean = false): Drawable?
     fun getIncomingMessageBackground(isInChain: Boolean = false): Drawable?
@@ -58,6 +55,7 @@ interface ChatAppearance {
     fun getIncomingSelectedMessageBackground(isInChain: Boolean = false): Drawable
     fun getSwipeActionIcon(): Drawable?
     fun getReadIndicatorIcon(): Drawable?
+    fun getSentIndicatorIcon(): Drawable?
     fun getTimeBackground(): Drawable?
 
     fun getDateFormatter(): ChatView.DateFormatter

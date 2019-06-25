@@ -6,14 +6,10 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 internal class DefaultAppearance(val context: Context) : ChatAppearance {
-    override var isReadColor = Color.argb(255, 255, 255, 255)
-    override var isSentColor = Color.argb(255, 255, 255, 255)
-
     override var messageBackgroundCornerRadius = 0f
     override var incomingMessageBackgroundColor = Color.argb(255, 175, 224, 255)
 
@@ -55,28 +51,26 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
     override var isIncomingReplyAuthorNameVisible = false
     override var isOutgoingReplyAuthorNameVisible = true
     override var isSwipeActionIconVisible = true
-    override var isReadIconVisible = true
-
 
     val defaultMessageLayout = R.layout.item_message
     val defaultImageLayout = R.layout.item_image_message
 
-    override var incomingMessageLayout: Int = defaultMessageLayout
-    override var outgoingMessageLayout: Int = defaultMessageLayout
-    override var incomingImageLayout: Int = defaultImageLayout
-    override var outgoingImageLayout: Int = defaultImageLayout
+    override var incomingTextMessageLayout: Int = defaultMessageLayout
+    override var outgoingTextMessageLayout: Int = defaultMessageLayout
+    override var incomingImageMessageLayout: Int = defaultImageLayout
+    override var outgoingImageMessageLayout: Int = defaultImageLayout
 
     fun setMessageLayout(incomingMessageLayout: Int?, outgoingMessageLayout: Int?) {
         if (incomingMessageLayout == null) {
-            this.incomingMessageLayout = defaultMessageLayout
+            this.incomingTextMessageLayout = defaultMessageLayout
         } else {
-            this.incomingMessageLayout = incomingMessageLayout
+            this.incomingTextMessageLayout = incomingMessageLayout
         }
 
         if (outgoingMessageLayout == null) {
-            this.outgoingMessageLayout = defaultMessageLayout
+            this.outgoingTextMessageLayout = defaultMessageLayout
         } else {
-            this.outgoingMessageLayout = outgoingMessageLayout
+            this.outgoingTextMessageLayout = outgoingMessageLayout
         }
     }
 
@@ -120,6 +114,7 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
 
     var swipeActionIconResource = R.drawable.ic_reply_black_24dp
     var readIcon = R.drawable.ic_done_all_black_24dp
+    var sentIcon = R.drawable.ic_access_time_black_24dp
     var timeBackgroundCapsule = R.drawable.time_background_capsule
 
     override fun getSwipeActionIcon(): Drawable? {
@@ -128,6 +123,10 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
 
     override fun getReadIndicatorIcon(): Drawable? {
         return context.resources.getDrawable(readIcon)
+    }
+
+    override fun getSentIndicatorIcon(): Drawable? {
+        return context.resources.getDrawable(sentIcon)
     }
 
     override fun getTimeBackground(): Drawable? {
@@ -148,7 +147,6 @@ internal class DefaultAppearance(val context: Context) : ChatAppearance {
     }
 
     override fun getDateFormatter(): ChatView.DateFormatter {
-
         mDateFormatter?.let {
             return it
         }

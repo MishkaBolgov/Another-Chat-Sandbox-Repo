@@ -101,22 +101,24 @@ open class MessageAdapter(val appearance: ChatAppearance, initTextMessages: List
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
         val layout = when (viewType) {
-            MessageType.INCOMING.type -> appearance.incomingMessageLayout
-            MessageType.OUTGOING.type -> appearance.outgoingMessageLayout
-            MessageType.INCOMING_IMAGE.type -> appearance.incomingImageLayout
-            MessageType.OUTGOING_IMAGE.type -> appearance.outgoingImageLayout
-            else -> appearance.outgoingMessageLayout
+            MessageType.INCOMING_TEXT.type -> appearance.incomingTextMessageLayout
+            MessageType.OUTGOING_TEXT.type -> appearance.outgoingTextMessageLayout
+            MessageType.INCOMING_IMAGE.type -> appearance.incomingImageMessageLayout
+            MessageType.OUTGOING_IMAGE.type -> appearance.outgoingImageMessageLayout
+            else -> appearance.outgoingTextMessageLayout
         }
 
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
 
         val viewHolder = when (viewType) {
-            MessageType.INCOMING.type, MessageType.OUTGOING.type -> TextMessageViewHolder(
+            MessageType.INCOMING_TEXT.type, MessageType.OUTGOING_TEXT.type -> TextMessageViewHolder(
                 view,
+                appearance,
                 appearance.getDateFormatter()
             )
             MessageType.INCOMING_IMAGE.type, MessageType.OUTGOING_IMAGE.type -> ImageViewHolder(
                 view,
+                appearance,
                 appearance.getDateFormatter(),
                 appearance.messageBackgroundCornerRadius,
                 appearance.minImageMessageWidth,
@@ -124,7 +126,7 @@ open class MessageAdapter(val appearance: ChatAppearance, initTextMessages: List
                 appearance.maxImageMessageWidth,
                 appearance.maxImageMessageHeight
             )
-            else -> TextMessageViewHolder(view, appearance.getDateFormatter())
+            else -> TextMessageViewHolder(view, appearance, appearance.getDateFormatter())
         }
 
         return viewHolder
@@ -191,12 +193,12 @@ open class MessageAdapter(val appearance: ChatAppearance, initTextMessages: List
         val message = messageList[position]
         return if (message.isIncoming()) {
             if (message is TextMessage)
-                MessageType.INCOMING.type
+                MessageType.INCOMING_TEXT.type
             else
                 MessageType.INCOMING_IMAGE.type
         } else {
             if (message is TextMessage)
-                MessageType.OUTGOING.type
+                MessageType.OUTGOING_TEXT.type
             else
                 MessageType.OUTGOING_IMAGE.type
         }

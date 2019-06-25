@@ -7,6 +7,9 @@ interface Message {
     fun getText(): String
     fun getAuthor(): Author
     fun getDate(): Date
-    fun isSent(): Boolean?
-    fun isRead(): Boolean?
+    fun getStatus(): Status
+
+    enum class Status {
+        NONE, READ, SENT
+    }
 }

@@ -144,9 +144,6 @@ class MainActivity : AppCompatActivity() {
 
         chatView.setReplyLineColor(color4)
 
-        chatView.setIsReadColor(color3)
-        chatView.setIsSentColor(color3)
-
         chatView.setIncomingMessageBackgroundColor(color1)
         chatView.setOutgoingMessageBackgroundColor(color2)
         chatView.setIncomingSelectedMessageBackgroundColor(color1)
@@ -197,9 +194,6 @@ class MainActivity : AppCompatActivity() {
 
         chatView.setReplyLineColor(color4)
 
-        chatView.setIsReadColor(color3)
-        chatView.setIsSentColor(color3)
-
         chatView.setIncomingMessageBackgroundColor(color1)
         chatView.setOutgoingMessageBackgroundColor(color2)
         chatView.setIncomingSelectedMessageBackgroundColor(color1)
@@ -230,9 +224,6 @@ class MainActivity : AppCompatActivity() {
                 Random.nextInt(255)
             )
         )
-
-        chatView.setIsReadColor(Color.argb(255, Random.nextInt(255), Random.nextInt(255), Random.nextInt(255)))
-        chatView.setIsSentColor(Color.argb(255, Random.nextInt(255), Random.nextInt(255), Random.nextInt(255)))
 
         chatView.setIncomingMessageBackgroundColor(
             Color.argb(
@@ -266,7 +257,6 @@ class MainActivity : AppCompatActivity() {
                 Random.nextInt(255)
             )
         )
-        chatView.setIsReadColor(Color.argb(255, Random.nextInt(255), Random.nextInt(255), Random.nextInt(255)))
 
 //        chatView.setMaxWidth(Random.nextInt(1000))
 //        chatView.setMinWidth(Random.nextInt(1000))

@@ -104,12 +104,9 @@ object MessageGenerator {
                 return repliedOn
             }
 
-            override fun isSent(): Boolean? {
-                return mIsSent
-            }
-
-            override fun isRead(): Boolean? {
-                return mIsRead
+            override fun getStatus(): Message.Status {
+                val rand = Random.nextInt(10)
+                return if(rand < 4) Message.Status.NONE else if(rand in 4..5) Message.Status.READ else Message.Status.SENT
             }
 
         }.also { messagesList.add(it) }
@@ -149,12 +146,9 @@ object MessageGenerator {
                 return mDate
             }
 
-            override fun isSent(): Boolean? {
-                return mIsSent
-            }
-
-            override fun isRead(): Boolean? {
-                return mIsRead
+            override fun getStatus(): Message.Status {
+                val rand = Random.nextInt(10)
+                return if(rand < 4) Message.Status.NONE else if(rand in 4..5) Message.Status.READ else Message.Status.SENT
             }
         }
     }
@@ -203,14 +197,10 @@ object MessageGenerator {
                 return repliedOn
             }
 
-            override fun isSent(): Boolean? {
-                return mIsSent
+            override fun getStatus(): Message.Status {
+                val rand = Random.nextInt(10)
+                return if(rand < 4) Message.Status.NONE else if(rand in 4..5) Message.Status.READ else Message.Status.SENT
             }
-
-            override fun isRead(): Boolean? {
-                return mIsRead
-            }
-
         }.also { messagesList.add(it) }
     }
 
